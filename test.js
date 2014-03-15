@@ -7,6 +7,7 @@ describe('image-booth', function(){
         var image = booth.newImage({
             source : './adder.jpg'
         });
+        /*
         image.save('./png_output.png', function(err){
             //should.not.exist(err);
             //done();

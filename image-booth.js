@@ -39,7 +39,7 @@
             //if there's no passed height, take the height of the created layer
             if(!ob.options.height) ob.options.height = newLayer.height;
             if(!ob.options.width) ob.options.width = newLayer.width;
-            this.layers.push(newLayer);
+            ob.layers.push(newLayer);
             if(!layer) layer = newLayer; //autofocus, if there isn't one
             callback.apply(callback, arguments);
         });
@@ -94,48 +94,8 @@
         });
     };
     
-    /*function Layer(options){
-        var height;
-        var width;
-        var img;
-        if(options.jpeg){
-            img = new Image;
-            img.src = squid;
-            height = img.height;
-            width = img.width;
-        }else{
-            height = options.image?options.image.height():options.height;
-            width = options.image?options.image.width():options.width;
-        }
-        this.buffer = new Canvas(height, width);
-        this.context2d = this.buffer.getContext('2d');
-        if(img){
-            this.context2d.drawImage(img, 0, 0);
-            this.pixels = this.context2d.getImageData(width, height);
-        }else{
-            //clear canvas
-            var data = this.context2d.getImageData(0,0, width, height)
-            for(var ypos = 0; ypos < img.height; ypos++){
-                for(xpos = 0; xpos < img.width; xpos++){
-                        pos = ((ypos*(img.width*4)) + (xpos*4));
-                        data.data[pos + 3] = 0;
-                }
-            }
-            this.pixels = data;
-        }
-        console.log('show me the pixels');
-    }
-    
-    Layer.prototype.focus = function(){
-        if(this.image); this.image.focus(this);
-    };
-    
-    Image.prototype.extract = function(){ //composite
-        if(this.image); this.image.focus(this);
-    };*/
     var getImage = function(location, callback){
         var img = new Canvas.Image();
-        console.log('IIIMMMMGGG', img);
         img.onload = function(){
             console.log('onload trigger');
             callback(img);
@@ -145,25 +105,48 @@
             var src = '';
             var sizeOf = require('image-size');
             var fs = require('fs');
-            Object.defineProperty(img, "src", {
+            fs.readFile(location, function(err, data){
+                img.src = data;
+                fs.writeFile('./WTF.jpg', data, function(err){
+                    console.log('done', err);
+                });
+                //img.src = new Buffer(0);
+                /*sizeOf(newValue, function (err, dimensions){
+                    img.width = dimensions.width;
+                    img.height = dimensions.height;
+                    console.log('^^^^', img.width = dimensions.width, img.height, img.width, dimensions.width, dimensions.height);
+                    if(img.onload){
+                        img.onload.apply(img);
+                        delete img.onload;
+                    }
+                });*/
+                console.log('^^^^', err, data, img.height, img.width);
+                console.log('^^^^', Object.keys(img));
+            });
+            /*Object.defineProperty(img, "src", {
                 get : function(){
                     return src;
                 },
                 set : function(newValue){
-                    console.log('******');
                     src = newValue;
+                    img.src = location;
+                    var ob = this; // this == img == ob;
                     fs.readFile(newValue, function(err, data){
-                        this['src'] = data;
-                        console.log('reading DIMS', newValue)
+                        src = data;
                         sizeOf(newValue, function (err, dimensions){
-                            console.log('DIMS!!!', err, dimensions);
+                            img.width = dimensions.width;
+                            img.height = dimensions.height;
+                            console.log('^^^^', img.width = dimensions.width, img.height, img.width, dimensions.width, dimensions.height);
+                            if(img.onload){
+                                img.onload.apply(img);
+                                delete img.onload;
+                            }
                         });
-                        //*/
                     });
                 },
                 enumerable : true,
                 configurable : true
-            });
+            });*/
         }
         img.src = location;
     }
@@ -182,7 +165,7 @@
         newImage : function(options){ 
             return new Image(options);
         },
-        newLayer : function(options, callback){
+        newLayer : function newLayer(options, callback){
             if(typeof options == 'function' && !callback){
                 callback = options;
                 options = {};
@@ -225,14 +208,14 @@
                 return getImage(options.source, function(image){
                     options.img = image;
                     delete options.source;
+                    newLayer(options, callback);
                 });
             }
-            console.log('>>>>', options, Canvas.Image)
             if(options.img || (options.height && options.width)){
                 height = options.img?options.img.height:options.height;
                 width = options.img?options.img.width:options.width;
             }else throw new Error('The image has no dimensions or progenitor');
-            console.log('3333', height, width);
+            console.log('3333', height, width, options.img.height);
             result.height = height;
             result.width = width;
             result.buffer = new Canvas(height, width);
