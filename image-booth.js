@@ -95,9 +95,8 @@
     };
     
     var getImage = function(location, callback){
-        var img = new Canvas.Image();
+        var img = new (window.Image || Canvas.Image)();
         img.onload = function(){
-            console.log('onload trigger');
             callback(img);
         };
         //TJ did some dumb shit here, let's fix it
@@ -107,9 +106,6 @@
             var fs = require('fs');
             fs.readFile(location, function(err, data){
                 img.src = data;
-                fs.writeFile('./WTF.jpg', data, function(err){
-                    console.log('done', err);
-                });
                 //img.src = new Buffer(0);
                 /*sizeOf(newValue, function (err, dimensions){
                     img.width = dimensions.width;

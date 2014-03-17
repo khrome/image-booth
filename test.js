@@ -5,7 +5,7 @@ var booth = require('./image-booth');
 describe('image-booth', function(){
     it('something', function(done){
         var image = booth.newImage({
-            source : './adder.jpg'
+            source : './truth.png'
         });
         /*
         image.save('./png_output.png', function(err){
