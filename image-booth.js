@@ -217,7 +217,6 @@
                 height = options.img?options.img.height:options.height;
                 width = options.img?options.img.width:options.width;
             }else throw new Error('The image has no dimensions or progenitor');
-            console.log('3333', height, width, options.img.height);
             result.height = height;
             result.width = width;
             result.buffer = new Canvas(height, width);
