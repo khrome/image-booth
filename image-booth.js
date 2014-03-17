@@ -17,7 +17,7 @@
         root.returnExports = factory(root.EventedArray, clientCanvas);
     }
 }(this, function(EventedArray, Canvas){
-    var registry;
+    var registry = {};
     var layer;
     var convolveBuffer;
     //var convolveBuffer;
@@ -99,7 +99,6 @@
         img.onload = function(){
             callback(img);
         };
-        //TJ did some dumb shit here, let's fix it
         if(typeof module !== 'undefined' && module.exports){
             var src = '';
             var sizeOf = require('image-size');
@@ -166,12 +165,19 @@
                 callback = options;
                 options = {};
             }
+            var layerOptions = options;
             var buffer = new Canvas();
             var result = {
                 filter : function(name, options){
                     if(typeof name == 'object' && !options){
                         options = name;
                         name = options.name;
+                    }
+                    var actor;
+                    if(registry['filter'] && (actor = registry['filter'][name]) ){
+                        
+                    }else{
+                        console.log('Error: filter not found('+name+')');
                     }
                     
                 },
@@ -449,6 +455,10 @@
     return {
         newImage : function(options){
             return new Image(options);
+        },
+        register : function(type, name, actor){
+            if(!registry[type]) registry[type] = {};
+            registry[type][name] = actor;
         } 
     };
 }));
