@@ -167,7 +167,8 @@
             }
             var layerOptions = options;
             var buffer = new Canvas();
-            var result = {
+            var result;
+            result = {
                 filter : function(name, options){
                     if(typeof name == 'object' && !options){
                         options = name;
@@ -175,7 +176,9 @@
                     }
                     var actor;
                     if(registry['filter'] && (actor = registry['filter'][name]) ){
-                        
+                        console.log('Filter('+name+'): ', actor);
+                        var newPixels = actor.act(result.pixels, options);
+                        result.pixels = newPixels;
                     }else{
                         console.log('Error: filter not found('+name+')');
                     }
@@ -262,8 +265,8 @@
         if(!convolveBuffer) convolveBuffer = new Canvas();
         if (pixels == null)throw new Error('Tried to convolve nothing!');
         //setup buffer
-        convolveBuffer.setProperty('width', pixels.width);
-        convolveBuffer.setProperty('height', pixels.height);
+        convolveBuffer.setAttribute('width', pixels.width);
+        convolveBuffer.setAttribute('height', pixels.height);
         var context = convolveBuffer.getContext('2d');
         var newPixels  = context.getImageData(0,0, pixels.width, pixels.height);
         var sx = pixels.width; //getx
@@ -451,13 +454,24 @@
         if(returnType === 'canvas') return buffer;
         if(returnType === 'context' || returnType === 'context2d') return buffer;
     }
-    return {
+    var booth = {
         newImage : function(options){
             return new Image(options);
         },
         register : function(type, name, actor){
             if(!registry[type]) registry[type] = {};
+            if(type === 'filter'){
+                if(!actor.name) actor.name = function(){ return name; };
+                if(!actor.label) actor.label = function(){ return name[0].toUpperCase()+name.substring(1); };
+                if(!actor.act) actor.act = function(pixels, options){
+                    return convolve(pixels, this.matrix(options), options.amount, options.threshold);
+                };
+            }
             registry[type][name] = actor;
         } 
     };
+    booth.composite = composite;
+    booth.convolve = convolve;
+    booth.merge = merge;
+    return booth;
 }));
