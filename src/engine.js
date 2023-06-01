@@ -19,16 +19,14 @@ export const operate = (layer, options)=>{ // custom pixel logic
 }
 
 export const createImage = async (location, callback)=>{
-    return new Promise((resolve)=>{
+    return new Promise((resolve, reject)=>{
         var img = new Canvas.Image();
-        console.log('???')
         img.onload = function(){
-            console.log('****')
             callback(null, img);
+            resolve(img)
         };
         img.onerror = function(err){
-            console.log('}}}', err)
-            //callback(img);
+            reject(err);
         };
         if(typeof module !== 'undefined' && module.exports){
             var src = '';
@@ -40,7 +38,6 @@ export const createImage = async (location, callback)=>{
                 console.log('^^^^', Object.keys(img));
             });
         }
-        console.log('>>', location);
         img.src = location.pathname.toString();
     });
 }
@@ -48,7 +45,9 @@ export const createImage = async (location, callback)=>{
 export const newLayer = async (options, callback)=>{
     const layer = new Layer(options);
     await layer.ready;
-    setTimeout(()=> callback(result));
+    setTimeout(()=>{
+        callback(layer)
+    });
     return layer;
 }
 
