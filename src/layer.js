@@ -2,53 +2,52 @@ import { Canvas } from 'environment-safe-canvas';
 import * as engine from './engine.js';
 export class Layer{
     constructor(options){
-        let height;
-        let width;
-        let img;
-        let ready
+        let ready;
+        const setFromCanvas = ()=>{
+            this.context2d = this.buffer.getContext('2d');
+            this.height = this.buffer.height;
+            this.width = this.buffer.width;
+            console.log(this.buffer, this.height, this.width);
+            if(options.image){
+                console.log('IMG', options.image)
+                this.context2d.drawImage(options.image, 0, 0, width, height);
+                this.pixels = this.context2d.getImageData(0, 0, width, height);
+                console.log('px', Array.prototype.filter.call(this.pixels, (value)=> (value === 0 || value === 255) ));
+            }else{
+                //clear canvas
+                var data = this.context2d.getImageData(0,0, this.width, this.height);
+                const height = this.height;
+                const width = this.width;
+                var ypos, xpos, pos;
+                for(var ypos = 0; ypos < height; ypos++){
+                    for(xpos = 0; xpos < width; xpos++){
+                            pos = ((ypos*(width*4)) + (xpos*4));
+                            data.data[pos + 3] = 0;
+                    }
+                }
+                this.pixels = data;
+            }
+        }
         if(options.source){
-            ready = engine.createImage(options.source, function(err, image){
-                if(err) throw err;
-                options.image = image;
-                delete options.source;
+            this.ready = new Promise(async (resolve, reject)=>{
+                try{
+                    this.buffer = await Canvas.load(options.source);
+                    setFromCanvas();
+                    resolve(this.pixels);
+                }catch(ex){ reject(ex) }
             });
         }else{
-            ready = new Promise((resolve)=> resolve());
-        }
-        this.ready = new Promise((resolve, reject)=>{
-            ready.then(()=>{
+            this.ready = new Promise(async (resolve, reject)=>{
                 try{
-                    if(options.image || (options.height && options.width)){
-                        height = options.image?options.image.height:options.height;
-                        width = options.image?options.image.width:options.width;
-                    }else throw new Error('The image has no dimensions or progenitor');
-                    this.height = height;
-                    this.width = width;
-                    this.buffer = new Canvas(height, width);
-                    this.context2d = this.buffer.getContext('2d');
-                    if(options.image){
-                        this.context2d.drawImage(options.image, 0, 0);
-                        this.pixels = this.context2d.getImageData(0, 0, width, height);
-                    }else{
-                        //clear canvas
-                        var data = this.context2d.getImageData(0,0, width, height)
-                        for(var ypos = 0; ypos < height; ypos++){
-                            for(xpos = 0; xpos < width; xpos++){
-                                    pos = ((ypos*(width*4)) + (xpos*4));
-                                    data.data[pos + 3] = 0;
-                            }
-                        }
-                        this.pixels = data;
-                    }
-                }catch(ex){
-                    console.log(ex);
-                }
-                resolve(true);
-                setTimeout(()=>{
-                });
+                    this.buffer = new Canvas({ 
+                        height: this.height || options.height, 
+                        width: this.width || options.width
+                    });
+                    setFromCanvas();
+                    resolve(this.pixels);
+                }catch(ex){ reject(ex) }
             });
-        });
-        
+        }
     }
     
     filter(name, options){

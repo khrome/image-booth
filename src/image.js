@@ -13,10 +13,18 @@ export class Image{
         this.layers = new EventedArray([]);
         this.engine = options.engine || engine;
         (new Emitter()).onto(this);
-        this.ready = this.newLayer({
-            source : options.source
-        }, function(){
-            if(options.ready) options.ready();
+        this.ready = new Promise(async (resolve, reject)=>{
+            try{
+                const layer = await this.newLayer({
+                    source : options.source,
+                    width : options.width,
+                    height : options.height
+                });
+                resolve(layer);
+            }catch(ex){
+                reject(ex);
+            }
+            
         });
     }
     
@@ -50,26 +58,44 @@ export class Image{
         //todo: cache previous composite and only rerender from changed layer down
         // todo todo: bidirectional composite cache
         //console.log('!!!!', this.layers[0]);
-        var renderedPixels = this.engine.composite(this.layers);
-        this.emit('composite', {
-            pixels : renderedPixels
-        });
-        return renderedPixels;
+        const type = 'canvas';
+        var result = this.engine.composite(this.layers, this.height(), this.width(), type);
+        const info = {};
+        info[type] = result;
+        this.emit('composite', info);
+        return result;
     };
     
     save(filename, cb){ //composite
-        var pixels = this.composite();
-        var buffer = new Canvas(this.height(), this.width());
-        console.log('1111', this.height(), this.width());
-        buffer.toDataURL('image/png', function(err, dataURL){
-            console.log('22222', err);
-            if(err) return cb(err);
-            var base64 = dataURL.substring(dataURL.indexOf(','));
-            var buffer = new Buffer(base64, 'base64');
-            console.log('??', buffer);
-            fs.writeFile(filename, buffer, function(err){
-                cb(err, buffer);
-            })
+        return new Promise(async (resolve, reject)=>{
+            try{
+                var pixels = this.composite();
+                const width = this.width();
+                const height = this.height();
+                const canvas = new Canvas({ height, width });
+                const context2d = canvas.getContext('2d');
+                const imageData = context2d.getImageData(0, 0, width, height);
+                imageData.pixels = pixels;
+                console.log();
+                context2d.putImageData(imageData, 0, 0);
+                await Canvas.save(filename, canvas);
+                resolve(canvas);
+                /*this.engine.saveImage(filename, canvas, (err, buffer)=>{
+                    console.log('#1');
+                    if(cb) cb(err, buffer);
+                    if(err) return reject(err);
+                    resolve(buffer);
+                });
+                /*console.log('####')
+                this.engine.saveImage(filename, pixels, height, width, (err, buffer)=>{
+                    console.log('#1');
+                    if(cb) cb(err, buffer);
+                    if(err) return reject(err);
+                    resolve(buffer);
+                });*/
+            }catch(ex){
+                reject(ex);
+            }
         });
     };
 }

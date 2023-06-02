@@ -1,4 +1,5 @@
 import { chai } from 'environment-safe-chai';
+import { Canvas } from 'environment-safe-canvas';
 const should = chai.should();
 import * as fs from 'fs';
 import * as path from 'path';
@@ -11,14 +12,10 @@ describe('image-booth', ()=>{
             source : new URL('racoon.jpg', import.meta.url)
         });
         await image.ready;
-        console.log(image);
-        
-        
-        /*
-        image.save('./png_output.png', function(err){
-            //should.not.exist(err);
-            //done();
-        });
-        //*/
+        image.layers.length.should.equal(1);
+        //console.log(image);
+        await image.save('foo.png');
+        const layer = image.layers[0];
+        await Canvas.save('foo1.png', layer.buffer);
     });
 });

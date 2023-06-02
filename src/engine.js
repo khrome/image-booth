@@ -1,5 +1,6 @@
 import { Canvas } from 'environment-safe-canvas';
 import { Layer } from './layer.js';
+import * as fs from 'fs';
 export const setBooth = (booth)=>{ // this is the object we find our various filters/brushes/ops/tools on
     registry = booth;
 }
@@ -18,36 +19,59 @@ export const operate = (layer, options)=>{ // custom pixel logic
     
 }
 
-export const createImage = async (location, callback)=>{
-    return new Promise((resolve, reject)=>{
-        var img = new Canvas.Image();
-        img.onload = function(){
-            callback(null, img);
-            resolve(img)
-        };
-        img.onerror = function(err){
-            reject(err);
-        };
-        if(typeof module !== 'undefined' && module.exports){
-            var src = '';
-            var sizeOf = require('image-size');
-            var fs = require('fs');
-            fs.readFile(location, function(err, data){
-                img.src = data;
-                console.log('^^^^', err, data, img.height, img.width);
-                console.log('^^^^', Object.keys(img));
-            });
-        }
-        img.src = location.pathname.toString();
-    });
+/*export const createImage = async (location, callback)=>{
+    const canvas = await Canvas.load(location);
+    if(callback)
+    return canvas;
+}*/
+
+export const saveImage = async (location, canvas, type='image/png', callback)=>{
+    try{
+        const savePromise = Canvas.save(location, canvas, type);
+        const result = await savePromise;
+        if(callback) callback(null, result);
+        return result;
+    }catch(ex){
+        console.log(callback)
+        if(callback) callback(ex)
+        else throw ex;
+    }
 }
+
+/*export const saveImage = (location, pixels, height, width, callback)=>{
+    console.log('A');
+    return new Promise((resolve, reject)=>{
+        console.log('B');
+        try{
+            var buffer = new Canvas({ height, width });
+            const context2d = buffer.getContext('2d');
+            const imgData2 = context2d.getImageData(0, 0, width, height);
+            imgData2.data = pixels;
+            context2d.putImageData(imgData2, 0, 0);
+            buffer.toDataURL('image/png', function(err, dataURL){
+                console.log('22222', err);
+                if(err) return cb(err);
+                console.log('<img src="' + dataURL + '" />');
+                var base64 = dataURL.substring(dataURL.indexOf(','));
+                var buffer = new Buffer(base64, 'base64');
+                console.log('??', buffer);
+                fs.writeFile(location, buffer, function(err){
+                    if(callback) callback(err, buffer);
+                    if(err) return reject(err);
+                    resolve(buffer);
+                })
+            });
+        }catch(ex){
+            console.log('F', ex);
+            reject(ex);
+        }
+    });
+}*/
 
 export const newLayer = async (options, callback)=>{
     const layer = new Layer(options);
     await layer.ready;
-    setTimeout(()=>{
-        callback(layer)
-    });
+    callback(layer);
     return layer;
 }
 
@@ -116,12 +140,21 @@ export const convolve = function(pixels, filter, filter_div, offset){
     // return the buffer
     return newPixels;
 }
+
+let convolveBuffer = null;
+
 export const merge = function(aPixels, bPixels, buffer, mode, opacity){ //src == image
-    if(!convolveBuffer) convolveBuffer = new Canvas();
+    if(!convolveBuffer) convolveBuffer = new Canvas({
+        width: aPixels.width,
+        height: aPixels.height
+    });
     //for clarity's sake, we are layering layer a over layer b
     if (aPixels == null || bPixels == null) throw new Error('Tried to convolve nothing!');
     if(aPixels.height != bPixels.height || aPixels.width != bPixels.width){
-        throw new Error('Mismatched pixel sizes: '+aPixels.length+' vs '+bPixels.length);
+        throw new Error(`Mismatched pixel size
+            data: ${aPixels.data.length} vs ${bPixels.data.length}
+            height: ${aPixels.height} vs ${bPixels.height}
+            width: ${aPixels.width} vs ${bPixels.width}`);
     }
     if(mode == null) mode = 'overlay';
     //setup buffer
@@ -188,6 +221,7 @@ export const merge = function(aPixels, bPixels, buffer, mode, opacity){ //src ==
             break;
         case 'overlay':
             var index, a_alpha, b_alpha;
+            var x;
             for(var y = 0; y < sy; y++){
                 for(x = 0; x < sx; x++){
                     index = ((y*(sx*4)) + (x*4));
@@ -225,7 +259,7 @@ export const merge = function(aPixels, bPixels, buffer, mode, opacity){ //src ==
             }
             break;
     }
-    (buffer || convolveBuffer.getContext('2d')).putImageData(newPixels, 0, 0);
+    (buffer || convolveBuffer.getContext('2d')).putImageData(newPixels, 0, 0, 0, 0, sx, sy);
     return newPixels;
 }
 export const dump = function(buffer, x, y){
@@ -244,20 +278,21 @@ export const dump = function(buffer, x, y){
     }
     return data;
 }
-export const composite = function(layers, returnType){
+export const composite = function(layers, height, width, returnType){
     // todo: top down opacity mask so opaque pixels aren't calculated below the level they achieve 100% opacity
     // (maybe hard to integrate with a bidirectional buffer)
-    var height = layers[0].image.height();
-    var width = layers[0].image.width();
-    var buffer = new Canvas(height, width);
+    //var height = layers[0].height;
+    //var width = layers[0].width;
+    var buffer = new Canvas({ height, width });
     var context = buffer.getContext('2d');
     var pixels = context.getImageData(0,0, width, height);
     layers.forEach(function(layer){
         if(!layer.pixels) throw new Error('this layer has no pixels');
-        pixels = merge(pixels, layer.pixels);
+        pixels = merge(pixels, layer.pixels, context);
     });
     if(returnType === 'pixels' || returnType === undefined) return pixels;
-    context.putImageData(pixels);
+    console.log(pixels);
+    context.putImageData(pixels, 0, 0, 0, 0, width, height);
     if(returnType === 'canvas') return buffer;
-    if(returnType === 'context' || returnType === 'context2d') return buffer;
+    if(returnType === 'context' || returnType === 'context2d') return context;
 }

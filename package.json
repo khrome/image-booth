@@ -29,7 +29,7 @@
         "array-events": "^1.1.0",
         "async-arrays": "^1.1.0",
         "canvas": "*",
-        "environment-safe-canvas": "^0.0.1",
+        "environment-safe-canvas": "^0.1.0",
         "extended-emitter-es6": "^1.1.3"
     },
     "devDependencies": {
