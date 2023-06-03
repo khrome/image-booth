@@ -1,5 +1,11 @@
 import { Canvas } from 'environment-safe-canvas';
 import { Layer } from './layer.js';
+
+import { darken } from './compositors/darken.js';
+import { lighten } from './compositors/lighten.js';
+import { overlay } from './compositors/overlay.js';
+const compositors = { darken, lighten, overlay };
+
 import * as fs from 'fs';
 export const setBooth = (booth)=>{ // this is the object we find our various filters/brushes/ops/tools on
     registry = booth;
@@ -171,94 +177,8 @@ export const merge = function(aPixels, bPixels, buffer, mode, opacity){ //src ==
     }
     var sx = aPixels.width; //getx
     var sy = aPixels.height; //gety
-    switch(mode){
-        case 'average':
-            
-            break;
-        case 'lighten':
-            for(var y = 0; y < sy; y++){
-                for(x = 0; x < sx; x++){
-                    newPixels.data[((y*(sx*4)) + (x*4))     ] = Math.max(
-                        aPixels.data[((y*(sx*4)) + (x*4))     ],
-                        bPixels.data[((y*(sx*4)) + (x*4))     ]
-                    );
-                    newPixels.data[((y*(sx*4)) + (x*4)) + 1 ] = Math.max(
-                        aPixels.data[((y*(sx*4)) + (x*4)) + 1 ],
-                        bPixels.data[((y*(sx*4)) + (x*4)) + 1 ]
-                    );
-                    newPixels.data[((y*(sx*4)) + (x*4)) + 2 ] = Math.max(
-                        aPixels.data[((y*(sx*4)) + (x*4)) + 2 ],
-                        bPixels.data[((y*(sx*4)) + (x*4)) + 2 ]
-                    );
-                    newPixels.data[((y*(sx*4)) + (x*4)) + 3 ] = Math.max(
-                        aPixels.data[((y*(sx*4)) + (x*4)) + 3 ],
-                        bPixels.data[((y*(sx*4)) + (x*4)) + 3 ]
-                    );
-                }
-            }
-            break;
-        case 'darken':
-            for(var y = 0; y < sy; y++){
-                for(x = 0; x < sx; x++){
-                    newPixels.data[((y*(sx*4)) + (x*4))     ] = Math.min(
-                        aPixels.data[((y*(sx*4)) + (x*4))     ],
-                        bPixels.data[((y*(sx*4)) + (x*4))     ]
-                    );
-                    newPixels.data[((y*(sx*4)) + (x*4)) + 1 ] = Math.min(
-                        aPixels.data[((y*(sx*4)) + (x*4)) + 1 ],
-                        bPixels.data[((y*(sx*4)) + (x*4)) + 1 ]
-                    );
-                    newPixels.data[((y*(sx*4)) + (x*4)) + 2 ] = Math.min(
-                        aPixels.data[((y*(sx*4)) + (x*4)) + 2 ],
-                        bPixels.data[((y*(sx*4)) + (x*4)) + 2 ]
-                    );
-                    newPixels.data[((y*(sx*4)) + (x*4)) + 3 ] = Math.min(
-                        aPixels.data[((y*(sx*4)) + (x*4)) + 3 ],
-                        bPixels.data[((y*(sx*4)) + (x*4)) + 3 ]
-                    );
-                }
-            }
-            break;
-        case 'overlay':
-            var index, a_alpha, b_alpha;
-            var x;
-            for(var y = 0; y < sy; y++){
-                for(x = 0; x < sx; x++){
-                    index = ((y*(sx*4)) + (x*4));
-                    a_alpha = aPixels.data[index  + 3];
-                    if(a_alpha == 0){
-                        newPixels.data[index    ] =  bPixels.data[index     ];
-                        newPixels.data[index + 1 ] = bPixels.data[index + 1 ];
-                        newPixels.data[index + 2 ] = bPixels.data[index + 2 ];
-                        newPixels.data[index + 3 ] = bPixels.data[index + 3 ];
-                    }else if (a_alpha == 255){
-                        newPixels.data[index    ] =  aPixels.data[index     ];
-                        newPixels.data[index + 1 ] = aPixels.data[index + 1 ];
-                        newPixels.data[index + 2 ] = aPixels.data[index + 2 ];
-                        newPixels.data[index + 3 ] = a_alpha;
-                    }else{
-                        //technically b should be a composite, and not use additive 
-                        var a_combine_amount = a_alpha/255;
-                        var b_combine_amount = (255-a_alpha)/255;
-                        var b_alpha = bPixels.data[index  + 3];
-                        newPixels.data[index    ] = 
-                            (aPixels.data[index     ] * a_combine_amount) 
-                            + (bPixels.data[index     ] * b_combine_amount)
-                        ;
-                        newPixels.data[index + 1 ] = 
-                            (aPixels.data[index + 1 ] * a_combine_amount) 
-                            + (bPixels.data[index + 1 ] * b_combine_amount)
-                        ;
-                        newPixels.data[index + 2 ] = 
-                            (aPixels.data[index + 2 ] * a_combine_amount) 
-                            + (bPixels.data[index + 2 ] * b_combine_amount)
-                        ;
-                        newPixels.data[index + 3 ] = Math.max(a_alpha, b_alpha);
-                    }
-                }
-            }
-            break;
-    }
+    if(!compositors[mode]) throw new Error('Unkown mode: '+mode);
+    compositors[mode](aPixels, bPixels, newPixels);
     (buffer || convolveBuffer.getContext('2d')).putImageData(newPixels, 0, 0, 0, 0, sx, sy);
     return newPixels;
 }
@@ -278,7 +198,7 @@ export const dump = function(buffer, x, y){
     }
     return data;
 }
-export const composite = function(layers, height, width, returnType){
+export const composite = function(layers, height, width, returnType = 'pixels'){
     // todo: top down opacity mask so opaque pixels aren't calculated below the level they achieve 100% opacity
     // (maybe hard to integrate with a bidirectional buffer)
     //var height = layers[0].height;
@@ -286,12 +206,11 @@ export const composite = function(layers, height, width, returnType){
     var buffer = new Canvas({ height, width });
     var context = buffer.getContext('2d');
     var pixels = context.getImageData(0,0, width, height);
-    layers.forEach(function(layer){
+    layers.forEach(function(layer, index){
         if(!layer.pixels) throw new Error('this layer has no pixels');
         pixels = merge(pixels, layer.pixels, context);
     });
-    if(returnType === 'pixels' || returnType === undefined) return pixels;
-    console.log(pixels);
+    if(returnType === 'pixels') return pixels;
     context.putImageData(pixels, 0, 0, 0, 0, width, height);
     if(returnType === 'canvas') return buffer;
     if(returnType === 'context' || returnType === 'context2d') return context;

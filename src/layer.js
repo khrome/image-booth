@@ -7,7 +7,6 @@ export class Layer{
             this.context2d = this.buffer.getContext('2d');
             this.height = this.buffer.height;
             this.width = this.buffer.width;
-            console.log(this.buffer, this.height, this.width);
             if(options.image){
                 console.log('IMG', options.image)
                 this.context2d.drawImage(options.image, 0, 0, width, height);
