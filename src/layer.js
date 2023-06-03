@@ -33,7 +33,7 @@ export class Layer{
                     this.buffer = await Canvas.load(options.source);
                     setFromCanvas();
                     resolve(this.pixels);
-                }catch(ex){ reject(ex) }
+                }catch(ex){ console.log('>>>', ex); reject(ex) }
             });
         }else{
             this.ready = new Promise(async (resolve, reject)=>{
