@@ -13,12 +13,12 @@ export const overlay = (aPixels, bPixels, newPixels)=>{
                 newPixels.data[index    ] =  bPixels.data[index     ];
                 newPixels.data[index + 1 ] = bPixels.data[index + 1 ];
                 newPixels.data[index + 2 ] = bPixels.data[index + 2 ];
-                newPixels.data[index + 3 ] = 0 //bPixels.data[index + 3 ];
+                newPixels.data[index + 3 ] = bPixels.data[index + 3 ];
             }else if (a_alpha == 255){
                 newPixels.data[index    ] =  aPixels.data[index     ];
                 newPixels.data[index + 1 ] = aPixels.data[index + 1 ];
                 newPixels.data[index + 2 ] = aPixels.data[index + 2 ];
-                newPixels.data[index + 3 ] = 0 //a_alpha;
+                newPixels.data[index + 3 ] = a_alpha;
             }else{
                 //technically b should be a composite, and not use additive 
                 var a_combine_amount = a_alpha/255;
@@ -40,12 +40,4 @@ export const overlay = (aPixels, bPixels, newPixels)=>{
             }
         }
     }
-    console.log('OVERLAID', count);
-    console.log('A');
-    booth.dump(`bar${count}a`, aPixels);
-    console.log('B');
-    booth.dump(`bar${count}b`, bPixels);
-    console.log('C');
-    booth.dump(`bar${count++}n`, newPixels);
-    console.log('D');
 }

@@ -36,7 +36,7 @@ export class Booth{
         let lcv=0;
         for(;lcv< this.toDump.length; lcv++){
             if(this.toDump[lcv].ob){
-                console.log('WRITING', Array.prototype.filter.call(
+                if(this.toDump[lcv].ob.data) console.log('WRITING', Array.prototype.filter.call(
                     this.toDump[lcv].ob.data, 
                     (value)=> !(value === 0 || value === 255) 
                 ));

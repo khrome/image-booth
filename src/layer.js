@@ -7,16 +7,17 @@ export class Layer{
             this.context2d = this.buffer.getContext('2d');
             this.height = this.buffer.height;
             this.width = this.buffer.width;
+            const height = this.height;
+            const width = this.width;
             if(options.image){
-                console.log('IMG', options.image)
                 this.context2d.drawImage(options.image, 0, 0, width, height);
+            }
+
+            if( options.image || options.source ){
                 this.pixels = this.context2d.getImageData(0, 0, width, height);
-                console.log('px', Array.prototype.filter.call(this.pixels, (value)=> (value === 0 || value === 255) ));
             }else{
                 //clear canvas
                 var data = this.context2d.getImageData(0,0, this.width, this.height);
-                const height = this.height;
-                const width = this.width;
                 var ypos, xpos, pos;
                 for(var ypos = 0; ypos < height; ypos++){
                     for(xpos = 0; xpos < width; xpos++){

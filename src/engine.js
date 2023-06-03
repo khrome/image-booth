@@ -5,6 +5,7 @@ import { darken } from './compositors/darken.js';
 import { lighten } from './compositors/lighten.js';
 import { overlay } from './compositors/overlay.js';
 const compositors = { darken, lighten, overlay };
+import booth from './booth.js';
 
 import * as fs from 'fs';
 export const setBooth = (booth)=>{ // this is the object we find our various filters/brushes/ops/tools on

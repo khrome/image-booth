@@ -54,11 +54,10 @@ export class Image{
         return (this.focused = layer) ;
     };
     
-    composite(){ //focused layer
+    composite(type='canvas'){
         //todo: cache previous composite and only rerender from changed layer down
         // todo todo: bidirectional composite cache
         //console.log('!!!!', this.layers[0]);
-        const type = 'canvas';
         var result = this.engine.composite(this.layers, this.height(), this.width(), type);
         const info = {};
         info[type] = result;
@@ -69,30 +68,9 @@ export class Image{
     save(filename, cb){ //composite
         return new Promise(async (resolve, reject)=>{
             try{
-                var pixels = this.composite();
-                const width = this.width();
-                const height = this.height();
-                const canvas = new Canvas({ height, width });
-                const context2d = canvas.getContext('2d');
-                const imageData = context2d.getImageData(0, 0, width, height);
-                imageData.pixels = pixels;
-                console.log();
-                context2d.putImageData(imageData, 0, 0);
+                var canvas = this.composite('canvas');
                 await Canvas.save(filename, canvas);
                 resolve(canvas);
-                /*this.engine.saveImage(filename, canvas, (err, buffer)=>{
-                    console.log('#1');
-                    if(cb) cb(err, buffer);
-                    if(err) return reject(err);
-                    resolve(buffer);
-                });
-                /*console.log('####')
-                this.engine.saveImage(filename, pixels, height, width, (err, buffer)=>{
-                    console.log('#1');
-                    if(cb) cb(err, buffer);
-                    if(err) return reject(err);
-                    resolve(buffer);
-                });*/
             }catch(ex){
                 reject(ex);
             }

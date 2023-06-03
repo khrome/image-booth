@@ -15,12 +15,8 @@ describe('image-booth', ()=>{
         });
         await image.ready;
         image.layers.length.should.equal(1);
-        //console.log(image);
         await image.save('foo.png');
         const layer = image.layers[0];
-        //await Canvas.save('foo1.png', layer.buffer);
-        defaultBooth.dump('foo1', layer.buffer);
-        defaultBooth.dump('foo2', layer.context2d.getImageData(0, 0, layer.buffer.width, layer.buffer.height));
-        await defaultBooth.flush();
+        const reloaded = await Canvas.load('foo.png');
     });
 });
