@@ -1,5 +1,6 @@
 import { Canvas } from 'environment-safe-canvas';
 import * as engine from './engine.js';
+import defaultBooth from './booth.js';
 export class Layer{
     constructor(options){
         let ready;
@@ -48,6 +49,11 @@ export class Layer{
                 }catch(ex){ reject(ex) }
             });
         }
+    }
+    
+    act(action, controls, booth=defaultBooth){
+        booth.registry[action].act(this.pixels.data, controls);
+        this.context2d.putImageData(this.pixels, 0, 0, 0, 0, this.pixels.width, this.pixels.height);
     }
     
     filter(name, options){

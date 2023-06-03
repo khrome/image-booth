@@ -1,10 +1,28 @@
 import { Image } from './image.js';
+import { Filter } from './filter.js';
 import { Canvas } from 'environment-safe-canvas';
+import { GaussianBlur } from './filters/blur.js';
+import * as defaultEngine from './engine.js';
 export class Booth{
     constructor(engine){
         this.engine = engine;
         this.toDump = [];
+        this.registry = {};
+        
     }
+    
+    register(ob){
+        let callable = ob.getLabel().split(' ').join('');
+        callable = callable.substring(0, 1).toLowerCase()+callable.substring(1);
+        if(this[callable]) throw new Error(`${callable} is a reserved symbol`);
+        this.registry[ob.name()] = ob;
+        this[callable] = (pixels, controls) => this[callable].act(pixels, controls);
+    }
+    
+    use(classDef){
+        const instance = new classDef(null, this.engine);
+        this.register(instance);
+    } 
     
     newImage(options){
         const image = new Image(options);
@@ -46,8 +64,10 @@ export class Booth{
     }
 }
 
-const booth = new Booth();
+//make the default a kitchen sink booth
+const booth = new Booth(defaultEngine);
 export default booth;
+booth.use(GaussianBlur);
 
 /*
 var booth = {
