@@ -15,7 +15,8 @@ describe('image-booth', ()=>{
         await image.ready;
         image.layers.length.should.equal(1);
         const layer = image.layers[0];
-        layer.act('gaussian-blur', { radius: 20 });
+        //layer.act('gaussian-blur', { radius: 20 });
+        layer.act('emboss', { type: 'a' });
         await image.save('foo.png');
         const reloaded = await Canvas.load('foo.png');
         await booth.flush();

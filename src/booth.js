@@ -2,6 +2,7 @@ import { Image } from './image.js';
 import { Filter } from './filter.js';
 import { Canvas } from 'environment-safe-canvas';
 import { GaussianBlur } from './filters/blur.js';
+import { Emboss } from './filters/emboss.js';
 import * as defaultEngine from './engine.js';
 export class Booth{
     constructor(engine){
@@ -68,6 +69,7 @@ export class Booth{
 const booth = new Booth(defaultEngine);
 export default booth;
 booth.use(GaussianBlur);
+booth.use(Emboss);
 
 /*
 var booth = {
