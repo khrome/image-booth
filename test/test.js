@@ -20,7 +20,9 @@ describe('image-booth', ()=>{
         //layer.act('detect-gradient', { });
         //layer.act('sharpen', { k: 4 });
         //layer.act('high-pass', { type: '3x3' });
-        layer.act('detect-edges', { direction: 'west' });
+        //layer.act('detect-edges', { direction: 'west' });
+        //layer.act('brightness-contrast', { brightness: 100, contrast: 100 });
+        layer.act('negative', { });
         await image.save('foo.png');
         const reloaded = await Canvas.load('foo.png');
         await booth.flush();
