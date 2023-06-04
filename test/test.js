@@ -16,7 +16,11 @@ describe('image-booth', ()=>{
         image.layers.length.should.equal(1);
         const layer = image.layers[0];
         //layer.act('gaussian-blur', { radius: 20 });
-        layer.act('emboss', { type: 'a' });
+        //layer.act('emboss', { type: 'a' });
+        //layer.act('detect-gradient', { });
+        //layer.act('sharpen', { k: 4 });
+        //layer.act('high-pass', { type: '3x3' });
+        layer.act('detect-edges', { direction: 'west' });
         await image.save('foo.png');
         const reloaded = await Canvas.load('foo.png');
         await booth.flush();

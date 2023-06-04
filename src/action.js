@@ -11,6 +11,10 @@ export class Action{
         throw new Error('.act() must be implemented in the filter class');
     }
     
+    merge(pixelsA, pixelsB, mode){
+        return this.engine.merge(pixelsA, pixelsB, mode);
+    }
+    
     getControls(){
         return {};
     }
