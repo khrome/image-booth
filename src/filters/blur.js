@@ -38,7 +38,8 @@ export class GaussianBlur extends Filter{
     }
     
     filter(pixels, controls){
-        var matrix = this.matrix(controls.radius, controls.radius);
+        const radius = controls.radius || 20;
+        var matrix = this.matrix(radius, radius);
         return this.convolve(pixels, matrix, controls.amount, controls.threshold);
     }
     

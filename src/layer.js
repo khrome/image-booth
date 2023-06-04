@@ -52,8 +52,9 @@ export class Layer{
     }
     
     act(action, controls, booth=defaultBooth){
-        booth.registry[action].act(this.pixels.data, controls);
-        this.context2d.putImageData(this.pixels, 0, 0, 0, 0, this.pixels.width, this.pixels.height);
+        const newPixels = booth.registry[action].act(this.pixels, controls);
+        this.pixels = newPixels;
+        this.context2d.putImageData(newPixels, 0, 0, 0, 0, this.pixels.width, this.pixels.height);
     }
     
     filter(name, options){

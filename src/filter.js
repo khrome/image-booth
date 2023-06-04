@@ -13,7 +13,6 @@ export class Filter extends Action{
     }
     
     convolve(pixels, filter, filter_div, offset){
-        return this.internalName;
-        this.engine.convolve(pixels, filter, filter_div, offset);
+        return this.engine.convolve(pixels, filter, filter_div, offset);
     }
 };
