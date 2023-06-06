@@ -1,7 +1,13 @@
-import { Image } from './image.js';
-import { Filter } from './filter.js';
 import { Canvas } from 'environment-safe-canvas';
 
+//core
+import { Image } from './image.js';
+import { Filter } from './filter.js';
+import { Action } from './action.js';
+import { Tool } from './tool.js';
+import { Brush } from './brush.js';
+
+//actions
 import { GaussianBlur } from './filters/blur.js';
 import { Emboss } from './filters/emboss.js';
 import { Laplacian } from './filters/laplacian.js';
@@ -11,21 +17,120 @@ import { Sobel } from './filters/sobel.js';
 import { BrightnessContrast } from './operations/brightness-contrast.js';
 import { Negative } from './operations/negative.js';
 
+//tools
+import { Paintbrush } from './tools/paintbrush.js';
+
+//brushes
+import { Scatter10px } from './brushes/10px-scatter.js';
+import { SoftRound10px } from './brushes/10px-soft-round.js';
+
 import * as defaultEngine from './engine.js';
+import { Emitter } from 'extended-emitter/extended-emitter.mjs';
 export class Booth{
     constructor(engine){
         this.engine = engine;
         this.toDump = [];
         this.registry = {};
-        
+        this.tools = {};
+        this.brushes = {};
+        this.currentTool = null;
+        this.currentBrush = null;
+        (new Emitter()).onto(this);
+    }
+    
+    setForeground(color){
+        this.foreground = color;
+        this.emit('set-foreground', color);
+    }
+    
+    setBackground(color){
+        this.background = color;
+        this.emit('set-background', color);
+    }
+    
+    bind(canvas, image, resolution=100){
+        canvas.width = image.width();
+        canvas.height = image.height();
+        canvas.setAttribute('style', 'cursor : crosshair')
+        let framelock;
+        const getFrame = (handler)=>{
+            if(!framelock){
+                framelock = true;
+                requestAnimationFrame(()=>{
+                    framelock = false;
+                    handler();
+                });
+            }
+        }
+        const interval = setInterval(()=>{
+            let dirty = null;
+            getFrame(()=>{
+                dirty = image.dirty();
+                if(dirty){
+                    const context = canvas.getContext('2d');
+                    const pixels = image.composite('pixels');
+                    context.putImageData(pixels, 0, 0, 0, 0, pixels.width, pixels.height);
+                    image.dirty(false);
+                }
+            });
+        }, resolution);
+        const context = canvas.getContext('2d');
+        const pixels = image.composite('pixels');
+        context.putImageData(pixels, 0, 0, 0, 0, image.width(), image.height());
+    }
+    
+    enableDraw(canvas, image){
+        var drawing = false;
+        canvas.addEventListener('mousedown', ()=>{
+            drawing = true;
+        });
+        canvas.addEventListener('mouseup', ()=>{
+            drawing = false;
+        });
+        canvas.addEventListener('mousemove', (event)=>{
+            var rect = canvas.getBoundingClientRect();
+            if(this.currentTool && this.currentBrush && drawing && image.focused){
+                const x = event.x - rect.left;
+                const y = event.y - rect.top;
+                const brush = this.currentBrush.kernel({});
+                setTimeout(()=>{ //detach from event
+                    this.currentTool.paint(
+                        image.focused.pixels,
+                        x, 
+                        y, 
+                        brush, 
+                        {
+                            foreground: this.foreground,
+                            //background: this.background,
+                        }
+                    )
+                    image.currentLayer.context2d.putImageData(image.focused.pixels, 0, 0);
+                    image.currentLayer.dirty = true;
+                    //image.currentLayer.alteredSinceLastPreview = true;
+                    //image.currentLayer.parentImage.repaint();
+                });
+            }
+        });
+        this.bind(canvas, image, 5);
     }
     
     register(ob){
         let callable = ob.getLabel().split(' ').join('');
         callable = callable.substring(0, 1).toLowerCase()+callable.substring(1);
         if(this[callable]) throw new Error(`${callable} is a reserved symbol`);
-        this.registry[ob.name()] = ob;
-        this[callable] = (pixels, controls) => this[callable].act(pixels, controls);
+        if(ob instanceof Action){
+            this.registry[ob.name()] = ob;
+            this[callable] = (pixels, controls) => this[callable].act(pixels, controls);
+        }
+        if(ob instanceof Tool){
+            this.tools[ob.name()] = ob;
+            this.currentTool = ob;
+            this[callable] = (pixels, shape, controls) => this[callable].stroke(pixels, controls);
+        }
+        if(ob instanceof Brush){
+            this.brushes[ob.name()] = ob;
+            this.currentBrush = ob;
+        }
     }
     
     use(classDef){
@@ -76,33 +181,22 @@ export class Booth{
 //make the default a kitchen sink booth
 const booth = new Booth(defaultEngine);
 export default booth;
+
+//Filters
 booth.use(GaussianBlur);
 booth.use(Emboss);
 booth.use(Laplacian);
 booth.use(Sharpen);
 booth.use(HighPass);
 booth.use(Sobel);
+
+//Operations
 booth.use(BrightnessContrast);
 booth.use(Negative);
 
-/*
-var booth = {
-    newImage : function(options){
-        return new Image(options);
-    },
-    register : function(type, name, actor){
-        if(!registry[type]) registry[type] = {};
-        if(type === 'filter'){
-            if(!actor.name) actor.name = function(){ return name; };
-            if(!actor.label) actor.label = function(){ return name[0].toUpperCase()+name.substring(1); };
-            if(!actor.act) actor.act = function(pixels, options){
-                return convolve(pixels, this.matrix(options), options.amount, options.threshold);
-            };
-        }
-        registry[type][name] = actor;
-    } 
-};
-booth.composite = composite;
-booth.convolve = convolve;
-booth.merge = merge;
-*/
+//Tools
+booth.use(Paintbrush);
+
+//Brushes
+booth.use(Scatter10px);
+booth.use(SoftRound10px);

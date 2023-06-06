@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="https://unpkg.com/wired-elements@0.9.2/dist/wired-elements.bundled.js"></script>
+    <style>
+      @font-face {
+        font-family: 'Material Icons';
+        font-style: normal;
+        font-weight: 400;
+        src: url(https://fonts.gstatic.com/s/materialicons/v140/flUhRq6tzZclQEJ-Vdg-IuiaDsNcIhQ8tQ.woff2) format('woff2');
+      }
+      label, p, wired-tabs, wired-item, wired-combo{
+        font-family: "Comic Sans MS", "Comic Sans", cursive;
+      }
+      #window1{
+        color: #000000; 
+        /*max-width: 80px;*/
+        background-color: #CCCCCC;
+      }
+      .color-input label{
+        width: 100px !important;
+      }
+    </style>
+    <title>Image Editor Demo</title>
+    <link rel="stylesheet" href="../node_modules/mocha/mocha.css">
+    <script src="
+        https://cdn.jsdelivr.net/npm/wolfy87-eventemitter@5.2.9/EventEmitter.min.js
+    "></script>
+    <script src="
+      https://cdn.jsdelivr.net/npm/@material/mwc-icon@0.27.0/mwc-icon.min.js
+    "></script>
+    <link rel="stylesheet" href="https://unpkg.com/window-engine@latest/dist/window-engine.min.css">
+    <script src="https://unpkg.com/window-engine@latest/dist/window-engine.min.js"></script>
+    <script src="https://unpkg.com/color-disc@1.0.1/dist/color-disc.min.js"></script>
+    <script type="text/javascript" src="https://unpkg.com/toolcool-color-picker@1.0.15/dist/toolcool-color-picker.min.js"></script>
+    <script src="https://unpkg.com/color-picker-web-component"></script>
+  </head>
+  <body>
+    <script type="importmap">
+        {
+            "imports": {
+                "chai": "/node_modules/chai/chai.js",
+                "environment-safe-chai": "/node_modules/environment-safe-chai/environment-safe-chai.js",
+                "environment-safe-canvas": "/node_modules/environment-safe-canvas/environment-safe-canvas.js",
+                "array-events/array-events.mjs": "/node_modules/array-events/array-events.mjs",
+                "async-arrays/async-arrays.mjs": "/node_modules/async-arrays/async-arrays.mjs",
+                "extended-emitter/extended-emitter.mjs": "/node_modules/extended-emitter/extended-emitter.mjs",
+                "extended-emitter-es6": "/node_modules/extended-emitter-es6/extended-emitter-es6.js",
+                
+                "sift": "/node_modules/sift/es5m/index.js",
+                "browser-or-node": "/node_modules/browser-or-node/src/index.js",
+                "module": "/node_modules/browser-or-node/src/index.js",
+                "node:events": "/node_modules/extended-emitter/node-events.mjs"
+            }
+        }
+    </script>
+    <canvas id="image"></canvas>
+    <script type="module" src="demo.js"></script>
+    <div class="windowGroup">
+      <div id="window1" class="window fade" style="display: initial; width: 220px">
+        <div class="purple" id="window1bar">
+          <p class="windowTitle" style="font-size:0.8em; margin-bottom:0px" >Tools</p>
+        </div>
+        <div id="toolbarContents" style="padding:10px; min-height: 120px">
+          
+        </div>
+        <hr/>
+        <table>
+          <tr>
+            <td><label style="font-size: 1.2em; padding-top:10px">Brush</label></td>
+            <td>
+              <wired-combo id="brushes"></wired-combo>
+            </td>
+          </tr>
+        </table>
+        <hr/>
+        <div style="position:absolute; margin-left: 80px;">
+          <label>Filter</label><br/>
+          <wired-combo>
+            <wired-item value="">Blur</wired-item>
+          </wired-combo>
+        </div>
+        <div style="height:100px; padding-left:5px; padding-top:5px">
+          <toolcool-color-picker
+            id="background-color"
+            style="position:absolute; "
+            button-width="3rem"
+            button-height="3rem"
+            button-padding="3px" 
+            color="#000000"
+          ></toolcool-color-picker>
+          <toolcool-color-picker 
+            id="foreground-color"
+            style="position:absolute; margin-top: 1.5rem; margin-left: 1.5rem"
+            button-width="3rem"
+            button-height="3rem"
+            button-padding="3px" 
+            color="#FFFFFF"
+          ></toolcool-color-picker>
+          <mwc-icon id="color-switch" style="cursor: url(/test/icon/Precision.cur); padding-top:50px" >change_circle</mwc-icon>
+        </div>
+        <wired-tabs selected="Wheel" style="background-color: #CCCCCC;">
+          <wired-tab name="Wheel">
+            <color-disc size="200" format="hex" id="wheel"></color-disc>
+            <div style="height:200px"></div>
+          </wired-tab>
+          <wired-tab name="Picker">
+            <color-picker 
+              id="picker"
+              style="width: 200px; font-size: 0.7em" 
+              formats="hex"
+              selectedformat="hex"
+            ></color-picker>
+          </wired-tab>
+          <wired-tab name="Palette">
+            No palette 
+          </wired-tab>
+        </wired-tabs>
+      </div>
+    </div>
+    <script type="module">
+        import { windrag } from 'https://cdn.jsdelivr.net/npm/windrag';
+        const window = windrag.create('#window1', '#window1bar');
+    </script>
+  </body>
+</html>

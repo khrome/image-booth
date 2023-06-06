@@ -22,7 +22,11 @@ describe('image-booth', ()=>{
         //layer.act('high-pass', { type: '3x3' });
         //layer.act('detect-edges', { direction: 'west' });
         //layer.act('brightness-contrast', { brightness: 100, contrast: 100 });
-        layer.act('negative', { });
+        //layer.act('negative', { });
+        layer.stroke('paintbrush', {
+            x: 30, y: 30,
+            x2: 80, y2: 80
+        }, '10px-scatter', { spacing: 0.5 });
         await image.save('foo.png');
         const reloaded = await Canvas.load('foo.png');
         await booth.flush();

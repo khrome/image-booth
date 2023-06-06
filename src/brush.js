@@ -1,4 +1,4 @@
-export class Action{
+export class Brush {
     constructor(name, engine){
         this.internalName = name;
         this.engine = engine;
@@ -8,12 +8,8 @@ export class Action{
         return this.internalName;
     }
     
-    act(layer, controls){
-        throw new Error('.act() must be implemented in the filter class');
-    }
-    
-    merge(pixelsA, pixelsB, mode){
-        return this.engine.merge(pixelsA, pixelsB, mode);
+    kernel(controls){
+       throw new Error('.kernel() must be implemented in the brush class');
     }
     
     getControls(){

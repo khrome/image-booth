@@ -1,5 +1,5 @@
 import { Canvas } from 'environment-safe-canvas';
-import { Emitter } from 'extended-emitter-es6';
+import { Emitter } from 'extended-emitter/extended-emitter.mjs';
 import { EventedArray } from 'array-events/array-events.mjs';
 import * as engine from './engine.js';
 
@@ -28,13 +28,31 @@ export class Image{
         });
     }
     
+    dirty(value=null){
+        try{
+            if(value !== null){
+                this.layers.forEach((layer)=> layer.dirty = value );
+                return value;
+            }
+            const isDirty = this.layers.reduce((agg, layer)=>{
+                return agg || layer.dirty;
+            }, false);
+            return isDirty;
+        }catch(ex){
+            console.log('ERR', ex)
+        }
+    }
+    
     async newLayer(options, callback){
         return this.engine.newLayer(options, (newLayer)=>{
+            newLayer.buffer.willReadFrequently = true;
             newLayer.image = this;
             //if there's no passed height, take the height of the created layer
             if(!this.options.height) this.options.height = newLayer.height;
             if(!this.options.width) this.options.width = newLayer.width;
             this.layers.push(newLayer);
+            if(!this.currentLayer) this.currentLayer = newLayer;
+            this.focusOn(newLayer);
             if(!layer) layer = newLayer; //autofocus, if there isn't one
             if(callback) callback(newLayer);
         });

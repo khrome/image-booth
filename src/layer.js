@@ -55,6 +55,26 @@ export class Layer{
         const newPixels = booth.registry[action].act(this.pixels, controls);
         this.pixels = newPixels;
         this.context2d.putImageData(newPixels, 0, 0, 0, 0, this.pixels.width, this.pixels.height);
+        this.dirty = true;
+    }
+    
+    stroke(tool, shape, brushName, controls, booth=defaultBooth){
+        console.log('?', brushName, booth.brushes)
+        const brush = booth.brushes[brushName].kernel(controls);
+        //todo: handle complex shapes/paths
+        const newPixels = booth.tools[tool].stroke(
+            this.pixels, 
+            shape.x, 
+            shape.y,
+            shape.x2,
+            shape.y2,
+            brush,
+            controls
+        );
+        
+        this.pixels = newPixels;
+        this.context2d.putImageData(newPixels, 0, 0, 0, 0, this.pixels.width, this.pixels.height);
+        this.dirty = true;
     }
     
     filter(name, options){
