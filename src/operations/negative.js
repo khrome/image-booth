@@ -7,7 +7,7 @@ export class Negative extends Operation{
     
     operate(pixels, controls){
         const mergeBuffer = new Canvas({ width: pixels.width, height: pixels.height });
-        const context = mergeBuffer.getContext('2d');
+        const context = mergeBuffer.getContext('2d', { willReadFrequently: true });
         var newPixels  = context.getImageData(0,0, pixels.width, pixels.height);
         var sx = pixels.width; //getx
         var sy = pixels.height; //gety

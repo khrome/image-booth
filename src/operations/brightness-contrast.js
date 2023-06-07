@@ -7,14 +7,13 @@ export class BrightnessContrast extends Operation{
     
     operate(pixels, controls){
         const mergeBuffer = new Canvas({ width: pixels.width, height: pixels.height });
-        const context = mergeBuffer.getContext('2d');
+        const context = mergeBuffer.getContext('2d', { willReadFrequently: true });
         controls.contrast = (controls.contrast+150)/150;
         //controls.brightness = (controls.brightness+150)/150;
         var newPixels  = context.getImageData(0,0, pixels.width, pixels.height);
         var sx = pixels.width; //getx
         var sy = pixels.height; //gety
         var legacy = true;
-        //contrast = Math.max(0,controls.contrast+1);
         var mul, add;
         if (legacy) {
             mul = controls.contrast;

@@ -45,7 +45,6 @@ export class Image{
     
     async newLayer(options, callback){
         return this.engine.newLayer(options, (newLayer)=>{
-            newLayer.buffer.willReadFrequently = true;
             newLayer.image = this;
             //if there's no passed height, take the height of the created layer
             if(!this.options.height) this.options.height = newLayer.height;

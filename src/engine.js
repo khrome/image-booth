@@ -78,7 +78,7 @@ export const convolve = function(pixels, filter, filter_div, offset, buffer){
     });
     if (pixels == null)throw new Error('Tried to convolve nothing!');
     //setup buffer
-    var context = convolveBuffer.getContext('2d');
+    var context = convolveBuffer.getContext('2d', { willReadFrequently: true });
     var newPixels  = context.getImageData(0,0, pixels.width, pixels.height);
     var sx = pixels.width; //getx
     var sy = pixels.height; //gety
@@ -147,7 +147,7 @@ export const merge = function(aPixels, bPixels, buffer, mode, opacity){ //src ==
         //convolveBuffer.setProperty('height', aPixels.height);
         convolveBuffer.width = aPixels.width;
         convolveBuffer.height = aPixels.height;
-        var context = convolveBuffer.getContext('2d');
+        var context = convolveBuffer.getContext('2d', { willReadFrequently: true });
         newPixels  = context.getImageData(0,0, aPixels.width, aPixels.height);
     }else{
         newPixels = buffer.getImageData(0,0, aPixels.width, aPixels.height);
@@ -156,7 +156,7 @@ export const merge = function(aPixels, bPixels, buffer, mode, opacity){ //src ==
     var sy = aPixels.height; //gety
     if(!compositors[mode]) throw new Error('Unkown mode: '+mode);
     compositors[mode](aPixels, bPixels, newPixels);
-    (buffer || convolveBuffer.getContext('2d')).putImageData(newPixels, 0, 0, 0, 0, sx, sy);
+    (buffer || convolveBuffer.getContext('2d', { willReadFrequently: true })).putImageData(newPixels, 0, 0, 0, 0, sx, sy);
     return newPixels;
 }
 export const dump = function(buffer, x, y){
@@ -181,7 +181,7 @@ export const composite = function(layers, height, width, returnType = 'pixels'){
     //var height = layers[0].height;
     //var width = layers[0].width;
     var buffer = new Canvas({ height, width });
-    var context = buffer.getContext('2d');
+    var context = buffer.getContext('2d', { willReadFrequently: true });
     var pixels = context.getImageData(0,0, width, height);
     layers.forEach(function(layer, index){
         if(!layer.pixels) throw new Error('this layer has no pixels');

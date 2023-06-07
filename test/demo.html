@@ -12,7 +12,15 @@
       label, p, wired-tabs, wired-item, wired-combo{
         font-family: "Comic Sans MS", "Comic Sans", cursive;
       }
+      label{
+        text-transform: capitalize;
+      }
       #window1{
+        color: #000000; 
+        /*max-width: 80px;*/
+        background-color: #CCCCCC;
+      }
+      #window2{
         color: #000000; 
         /*max-width: 80px;*/
         background-color: #CCCCCC;
@@ -20,9 +28,14 @@
       .color-input label{
         width: 100px !important;
       }
+      *{
+        cursor : url('./icon/Normal.cur'), crosshair;
+      }
+      mwc-icon{
+        cursor : url('./icon/Link.cur'), grab;
+      }
     </style>
     <title>Image Editor Demo</title>
-    <link rel="stylesheet" href="../node_modules/mocha/mocha.css">
     <script src="
         https://cdn.jsdelivr.net/npm/wolfy87-eventemitter@5.2.9/EventEmitter.min.js
     "></script>
@@ -30,10 +43,12 @@
       https://cdn.jsdelivr.net/npm/@material/mwc-icon@0.27.0/mwc-icon.min.js
     "></script>
     <link rel="stylesheet" href="https://unpkg.com/window-engine@latest/dist/window-engine.min.css">
-    <script src="https://unpkg.com/window-engine@latest/dist/window-engine.min.js"></script>
     <script src="https://unpkg.com/color-disc@1.0.1/dist/color-disc.min.js"></script>
     <script type="text/javascript" src="https://unpkg.com/toolcool-color-picker@1.0.15/dist/toolcool-color-picker.min.js"></script>
     <script src="https://unpkg.com/color-picker-web-component"></script>
+    <script src="
+        http://localhost:8000/node_modules/file-saver/dist/FileSaver.js
+    "></script>
   </head>
   <body>
     <script type="importmap">
@@ -67,18 +82,18 @@
         <hr/>
         <table>
           <tr>
-            <td><label style="font-size: 1.2em; padding-top:10px">Brush</label></td>
+            <td><mwc-icon>filter_alt</mwc-icon></td>
             <td>
-              <wired-combo id="brushes"></wired-combo>
+              <wired-combo id="operations">
+                <!--<wired-item value="">Blur</wired-item>-->
+              </wired-combo>
             </td>
           </tr>
         </table>
-        <hr/>
-        <div style="position:absolute; margin-left: 80px;">
-          <label>Filter</label><br/>
-          <wired-combo>
-            <wired-item value="">Blur</wired-item>
-          </wired-combo>
+        <wired-divider class="wired-renderer"></wired-divider>
+        <div id="brushDiv" style="position:absolute; margin-left: 80px; font-size: 0.7em">
+          <br/><label>Brush</label><br/>
+          <wired-combo id="brushes" role="combobox" aria-expanded="false" aria-haspopup="listbox" class="wired-rendered"></wired-combo>
         </div>
         <div style="height:100px; padding-left:5px; padding-top:5px">
           <toolcool-color-picker
@@ -97,9 +112,9 @@
             button-padding="3px" 
             color="#FFFFFF"
           ></toolcool-color-picker>
-          <mwc-icon id="color-switch" style="cursor: url(/test/icon/Precision.cur); padding-top:50px" >change_circle</mwc-icon>
+          <mwc-icon id="color-switch" style="padding-top:50px" >change_circle</mwc-icon>
         </div>
-        <wired-tabs selected="Wheel" style="background-color: #CCCCCC;">
+        <wired-tabs selected="Wheel" style="box-shadow: 8px 8px 6px -6px black; background-color: #CCCCCC;">
           <wired-tab name="Wheel">
             <color-disc size="200" format="hex" id="wheel"></color-disc>
             <div style="height:200px"></div>
@@ -117,10 +132,33 @@
           </wired-tab>
         </wired-tabs>
       </div>
+      <div id="window2" class="window fade" >
+        <div class="purple" id="window2bar">
+          <p class="windowTitle" style="margin: 0px" >Filter Preview</p>
+        </div>
+        <div id="filterContents">
+          
+        </div>
+      </div>
     </div>
+    <!--<script src="https://unpkg.com/window-engine@latest/dist/window-engine.min.js"></script>-->
     <script type="module">
+        
         import { windrag } from 'https://cdn.jsdelivr.net/npm/windrag';
-        const window = windrag.create('#window1', '#window1bar');
+        const window1 = windrag.create('#window1', '#window1bar');
+        const window2 = windrag.create('#window2', '#window2bar');
+        const window1El = document.getElementById('window1');
+        let lastLeft = null;
+        let lastWidth = null;
+        let lastTop = null;
+        let lastHeight = null;
+        let width = window.innerWidth;
+        let height = window.innerHeight;
+        const window1Width = parseInt(window1El.style.width);
+        const window1Height = parseInt(window1El.style.height);
+        window1El.style.top = (height - (10 + window1Height))+'px';
+        window1El.style.left = (width - (10 + window1Width))+'px';
+        //*/
     </script>
   </body>
 </html>

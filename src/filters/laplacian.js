@@ -19,7 +19,8 @@ export class Laplacian extends Filter{
     
     filter(pixels, controls){
         const mergeBuffer = new Canvas({ width: pixels.width, height: pixels.height });
-        const mergeContext = mergeBuffer.getContext('2d');
+        const mergeContext = mergeBuffer.getContext('2d', { willReadFrequently: true });
+        mergeContext.willReadFrequently = true;
         var resultA = this.convolve(pixels, this.laplacian_matrix, 2, 1);
         var resultB = this.convolve(pixels, this.laplacian_matrix2, 2, 1);
         return this.merge(resultA, resultB, mergeContext, 'lighten');

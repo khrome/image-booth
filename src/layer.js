@@ -5,7 +5,7 @@ export class Layer{
     constructor(options){
         let ready;
         const setFromCanvas = ()=>{
-            this.context2d = this.buffer.getContext('2d');
+            this.context2d = this.buffer.getContext('2d', { willReadFrequently: true });
             this.height = this.buffer.height;
             this.width = this.buffer.width;
             const height = this.height;

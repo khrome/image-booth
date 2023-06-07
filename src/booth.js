@@ -21,8 +21,16 @@ import { Negative } from './operations/negative.js';
 import { Paintbrush } from './tools/paintbrush.js';
 
 //brushes
+import { Round5px } from './brushes/5px-round.js';
+import { Round3px } from './brushes/3px-round.js';
+import { Square1px } from './brushes/1px-square.js';
+import { Square5px } from './brushes/5px-square.js';
 import { Scatter10px } from './brushes/10px-scatter.js';
-import { SoftRound10px } from './brushes/10px-soft-round.js';
+import { SoftRound5px } from './brushes/5px-soft-round.js'; 
+import { SoftRound10px } from './brushes/10px-soft-round.js'; 
+import { SoftRound15px } from './brushes/15px-soft-round.js'; 
+import { SoftRound20px } from './brushes/20px-soft-round.js'; 
+import { SoftRound40px } from './brushes/40px-soft-round.js';
 
 import * as defaultEngine from './engine.js';
 import { Emitter } from 'extended-emitter/extended-emitter.mjs';
@@ -51,7 +59,7 @@ export class Booth{
     bind(canvas, image, resolution=100){
         canvas.width = image.width();
         canvas.height = image.height();
-        canvas.setAttribute('style', 'cursor : crosshair')
+        canvas.setAttribute('style', "cursor : url('./icon/Precision.cur'), crosshair")
         let framelock;
         const getFrame = (handler)=>{
             if(!framelock){
@@ -67,14 +75,14 @@ export class Booth{
             getFrame(()=>{
                 dirty = image.dirty();
                 if(dirty){
-                    const context = canvas.getContext('2d');
+                    const context = canvas.getContext('2d', { willReadFrequently: true });
                     const pixels = image.composite('pixels');
                     context.putImageData(pixels, 0, 0, 0, 0, pixels.width, pixels.height);
                     image.dirty(false);
                 }
             });
         }, resolution);
-        const context = canvas.getContext('2d');
+        const context = canvas.getContext('2d', { willReadFrequently: true });
         const pixels = image.composite('pixels');
         context.putImageData(pixels, 0, 0, 0, 0, image.width(), image.height());
     }
@@ -124,12 +132,12 @@ export class Booth{
         }
         if(ob instanceof Tool){
             this.tools[ob.name()] = ob;
-            this.currentTool = ob;
+            if(!this.currentTool) this.currentTool = ob;
             this[callable] = (pixels, shape, controls) => this[callable].stroke(pixels, controls);
         }
         if(ob instanceof Brush){
             this.brushes[ob.name()] = ob;
-            this.currentBrush = ob;
+            if(!this.currentBrush) this.currentBrush = ob;
         }
     }
     
@@ -146,16 +154,14 @@ export class Booth{
     async save(location, ob){
         if(ob.data && ob.height && ob.width){
             //imageData
-            console.log('save image data', location)
             const canvas = new Canvas({ height: ob.height,  width: ob.width });
-            const context = canvas.getContext('2d');
+            const context = canvas.getContext('2d', { willReadFrequently: true });
             context.putImageData(ob, 0, 0, 0, 0, ob.width, ob.height);
             await Canvas.save(location, canvas);
         }
         
         if(ob.getContext){
             //canvas
-            console.log('save canvas', location)
             await Canvas.save(location, ob);
         }
     }
@@ -198,5 +204,13 @@ booth.use(Negative);
 booth.use(Paintbrush);
 
 //Brushes
+booth.use(Square1px);
+booth.use(Square5px);
+booth.use(Round3px);
+booth.use(Round5px);
 booth.use(Scatter10px);
+booth.use(SoftRound5px);
 booth.use(SoftRound10px);
+booth.use(SoftRound15px);
+booth.use(SoftRound20px);
+booth.use(SoftRound40px);
