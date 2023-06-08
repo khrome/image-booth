@@ -22,6 +22,7 @@ import { Paintbrush } from './tools/paintbrush.js';
 import { Draw } from './tools/draw.js';
 import { SampleColor } from './tools/sample-color.js';
 import { FloodFill } from './tools/flood-fill.js';
+import { Clone } from './tools/clone.js';
 
 //brushes
 import { Round5px } from './brushes/5px-round.js';
@@ -37,6 +38,9 @@ import { SoftRound40px } from './brushes/40px-soft-round.js';
 
 import * as defaultEngine from './engine.js';
 import { Emitter } from 'extended-emitter/extended-emitter.mjs';
+
+const metalist = ['Shift', 'Control', 'Alt', 'Meta'];
+
 export class Booth{
     constructor(engine){
         this.engine = engine;
@@ -46,6 +50,7 @@ export class Booth{
         this.brushes = {};
         this.currentTool = null;
         this.currentBrush = null;
+        this.cloneMeta = {};
         (new Emitter()).onto(this);
     }
     
@@ -100,6 +105,19 @@ export class Booth{
     }
     
     enableDraw(canvas, image){
+        this.meta = {};
+        window.addEventListener('keydown', (event)=>{
+            const metaIndex = metalist.indexOf(event.code.replace('Left', '').replace('Right', ''));
+            if(metaIndex !== -1){
+                this.meta[metalist[metaIndex].toLowerCase()] = true;
+            }
+        });
+        window.addEventListener('keyup', (event)=>{
+            const metaIndex = metalist.indexOf(event.code.replace('Left', '').replace('Right', ''));
+            if(metaIndex !== -1){
+                this.meta[metalist[metaIndex].toLowerCase()] = false;
+            }
+        });
         var drawing = false;
         const drawPoint = (event)=>{
             if(this.currentTool && this.currentBrush && drawing && image.focused){
@@ -108,6 +126,7 @@ export class Booth{
                 const y = event.y - rect.top;
                 const brush = this.currentBrush.kernel({});
                 setTimeout(()=>{ //detach from event
+                    console.log(this.cloneMeta, this.meta)
                     this.currentTool.paint(
                         image.focused.pixels,
                         x, 
@@ -115,6 +134,8 @@ export class Booth{
                         brush, 
                         {
                             foreground: this.foreground,
+                            background: this.background,
+                            cloneMeta: this.cloneMeta
                             //background: this.background,
                         }
                     )
@@ -219,6 +240,7 @@ booth.use(Negative);
 //Tools
 booth.use(Paintbrush);
 booth.use(Draw);
+booth.use(Clone);
 booth.use(SampleColor);
 booth.use(FloodFill);
 

@@ -23,25 +23,28 @@ const image = booth.newImage({
     toolbar.setAttribute('class', 'mainWindow');
     const tools = [
         {name: 'paintbrush', icon: 'brush', click: ()=>{
-            booth.currentTool = booth.tools['paintbrush']
+            booth.currentTool = booth.tools['paintbrush'];
             return true;
         }},
         {name: 'pencil', icon: 'edit', click: ()=>{
-            booth.currentTool = booth.tools['draw']
+            booth.currentTool = booth.tools['draw'];
             return true;
         }},
         {name: 'floodfill', icon: 'format_color_fill', click: ()=>{
-            booth.currentTool = booth.tools['flood-fill']
+            booth.currentTool = booth.tools['flood-fill'];
             return true;
         }},
         {name: 'sample', icon: 'colorize', click: ()=>{
-            booth.currentTool = booth.tools['sample-color']
+            booth.currentTool = booth.tools['sample-color'];
             return true;
         }},
         /* {name: 'import', icon: 'add_photo_alternate'},
         {name: 'magic-wand', icon: 'auto_fix_high'},
         {name: 'text', icon: 'text_fields'},*/
-        {name: 'clone', icon: 'approval'},
+        {name: 'clone', icon: 'approval', click: ()=>{
+            booth.currentTool = booth.tools['clone'];
+            return true;
+        }},
         {name: 'print', icon: 'print', click: ()=>{
             window.print();
         }},
