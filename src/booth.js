@@ -19,6 +19,7 @@ import { Negative } from './operations/negative.js';
 
 //tools
 import { Paintbrush } from './tools/paintbrush.js';
+import { SampleColor } from './tools/sample-color.js';
 
 //brushes
 import { Round5px } from './brushes/5px-round.js';
@@ -89,15 +90,9 @@ export class Booth{
     
     enableDraw(canvas, image){
         var drawing = false;
-        canvas.addEventListener('mousedown', ()=>{
-            drawing = true;
-        });
-        canvas.addEventListener('mouseup', ()=>{
-            drawing = false;
-        });
-        canvas.addEventListener('mousemove', (event)=>{
-            var rect = canvas.getBoundingClientRect();
+        const drawPoint = (event)=>{
             if(this.currentTool && this.currentBrush && drawing && image.focused){
+                const rect = canvas.getBoundingClientRect();
                 const x = event.x - rect.left;
                 const y = event.y - rect.top;
                 const brush = this.currentBrush.kernel({});
@@ -118,6 +113,16 @@ export class Booth{
                     //image.currentLayer.parentImage.repaint();
                 });
             }
+        }
+        canvas.addEventListener('mousedown', ()=>{
+            drawing = true;
+            drawPoint(event);
+        });
+        canvas.addEventListener('mouseup', ()=>{
+            drawing = false;
+        });
+        canvas.addEventListener('mousemove', (event)=>{
+            drawPoint(event);
         });
         this.bind(canvas, image, 5);
     }
@@ -132,12 +137,12 @@ export class Booth{
         }
         if(ob instanceof Tool){
             this.tools[ob.name()] = ob;
-            if(!this.currentTool) this.currentTool = ob;
+            //if(!this.currentTool) this.currentTool = ob;
             this[callable] = (pixels, shape, controls) => this[callable].stroke(pixels, controls);
         }
         if(ob instanceof Brush){
             this.brushes[ob.name()] = ob;
-            if(!this.currentBrush) this.currentBrush = ob;
+            //if(!this.currentBrush) this.currentBrush = ob;
         }
     }
     
@@ -202,6 +207,7 @@ booth.use(Negative);
 
 //Tools
 booth.use(Paintbrush);
+booth.use(SampleColor);
 
 //Brushes
 booth.use(Square1px);

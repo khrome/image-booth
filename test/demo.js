@@ -15,16 +15,23 @@ const image = booth.newImage({
     brushesEl.remove()
     
     const canvas = document.getElementById('image');
+    const screen = document.getElementById('screen');
     //booth.currentTool = booth.tools['paintbrush'];
     booth.enableDraw(canvas, image);
     
     const toolbar = document.getElementById('toolbarContents');
     toolbar.setAttribute('class', 'mainWindow');
     const tools = [
-        {name: 'paintbrush', icon: 'brush'},
+        {name: 'paintbrush', icon: 'brush', click: ()=>{
+            booth.currentTool = booth.tools['paintbrush']
+            return true;
+        }},
         {name: 'pencil', icon: 'edit'},
         {name: 'floodfill', icon: 'format_color_fill'},
-        {name: 'sample', icon: 'colorize'},
+        {name: 'sample', icon: 'colorize', click: ()=>{
+            booth.currentTool = booth.tools['sample-color']
+            return true;
+        }},
         {name: 'import', icon: 'add_photo_alternate'},
         {name: 'magic-wand', icon: 'auto_fix_high'},
         {name: 'text', icon: 'text_fields'},
@@ -72,17 +79,32 @@ const image = booth.newImage({
         const action = booth.registry[event.detail.selected];
         const filterwindowContent = document.getElementById('filterContents');
         buildFilterPreview(action, filterwindowContent, image);
-        const filterwindow = document.getElementById('window2');
-        filterwindow.setAttribute('style', 'display:initial');
+        screen.style.display = 'block';
+        const filterWindow = document.getElementById('window2');
+        filterWindow.setAttribute('style', 'position:fixed; display:block');
     })
     const brushDiv = document.getElementById('brushDiv');
     brushDiv.appendChild(brushesEl);
+    let selectedButton = null;
+    const setSelectedButton = (button)=>{
+        if(selectedButton){
+            selectedButton.setAttribute('style', 'color: #FEFEFE');
+            selectedButton.children[0].setAttribute('style', 'color: #444444');
+        }
+        button.setAttribute('style', 'color: #444444');
+        button.children[0].setAttribute('style', 'color: #000000');
+        selectedButton = button;
+    }
     tools.forEach((tool)=>{
         const button = document.createElement('wired-icon-button');
-        button.innerHTML = `<mwc-icon>${tool.icon}</mwc-icon>`
-        if(tool.click) button.addEventListener('click', ()=>{
-            tool.click();
-        })
+        button.innerHTML = `<mwc-icon>${tool.icon}</mwc-icon>`;
+        button.setAttribute('style', 'color: #FEFEFE');
+        button.children[0].setAttribute('style', 'color: #444444');
+        button.addEventListener('click', ()=>{
+            let selectable = true;
+            if(tool.click) selectable = tool.click();
+            if(selectable) setSelectedButton(button);
+        });
         toolbar.appendChild(button);
     });
     changeForeground('#000000');

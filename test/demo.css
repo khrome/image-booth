@@ -1,0 +1,50 @@
+@font-face {
+  font-family: 'Material Icons';
+  font-style: normal;
+  font-weight: 400;
+  src: url(https://fonts.gstatic.com/s/materialicons/v140/flUhRq6tzZclQEJ-Vdg-IuiaDsNcIhQ8tQ.woff2) format('woff2');
+}
+label, p, wired-tabs, wired-item, wired-combo{
+  /*font-family: "Comic Sans MS", "Comic Sans", cursive;*/
+  /*font-family: 'Amatic SC', cursive;*/
+  font-family: 'Architects Daughter', cursive;
+}
+.title, wired-button{
+  /*font-family: "Comic Sans MS", "Comic Sans", cursive;*/
+  font-family: 'Amatic SC', cursive;
+  /*font-family: 'Architects Daughter', cursive;*/
+}
+label{
+  text-transform: capitalize;
+}
+body{
+  background-image: url("images/sketch-check.png");
+  background-repeat: repeat;
+  background-size: 300px 300px;
+}
+#window2, #screen{
+  z-index: 200;
+}
+.surface{
+  display: block;
+  margin: auto;
+}
+#window1{
+  color: #000000; 
+  /*max-width: 80px;*/
+  background-color: #FEFEFE;
+}
+#window2{
+  color: #000000; 
+  /*max-width: 80px;*/
+  background-color: #FEFEFE;
+}
+.color-input label{
+  width: 100px !important;
+}
+*{
+  cursor : url('./icon/Normal.cur'), crosshair;
+}
+mwc-icon, toolcool-color-picker, wired-combo, wired-item, button{
+  cursor : url('./icon/Link.cur'), grab !important;
+}

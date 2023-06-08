@@ -52,9 +52,9 @@ export class GaussianBlur extends Filter{
                 'lower_bound' : '0'
             },
             'radius' : {
-                'value' : '6',
-                'default' : '6',
-                'upper_bound' : '12',
+                'value' : '10',
+                'default' : '10',
+                'upper_bound' : '20',
                 'lower_bound' : '3'
             },
             'threshold' : {

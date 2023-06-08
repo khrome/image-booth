@@ -2,40 +2,11 @@
 <html>
   <head>
     <script src="https://unpkg.com/wired-elements@0.9.2/dist/wired-elements.bundled.js"></script>
-    <style>
-      @font-face {
-        font-family: 'Material Icons';
-        font-style: normal;
-        font-weight: 400;
-        src: url(https://fonts.gstatic.com/s/materialicons/v140/flUhRq6tzZclQEJ-Vdg-IuiaDsNcIhQ8tQ.woff2) format('woff2');
-      }
-      label, p, wired-tabs, wired-item, wired-combo{
-        font-family: "Comic Sans MS", "Comic Sans", cursive;
-      }
-      label{
-        text-transform: capitalize;
-      }
-      #window1{
-        color: #000000; 
-        /*max-width: 80px;*/
-        background-color: #CCCCCC;
-      }
-      #window2{
-        color: #000000; 
-        /*max-width: 80px;*/
-        background-color: #CCCCCC;
-      }
-      .color-input label{
-        width: 100px !important;
-      }
-      *{
-        cursor : url('./icon/Normal.cur'), crosshair;
-      }
-      mwc-icon{
-        cursor : url('./icon/Link.cur'), grab;
-      }
-    </style>
+    <link rel="stylesheet" href="demo.css">
     <title>Image Editor Demo</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Amatic+SC&family=Architects+Daughter&display=swap" rel="stylesheet">
     <script src="
         https://cdn.jsdelivr.net/npm/wolfy87-eventemitter@5.2.9/EventEmitter.min.js
     "></script>
@@ -51,6 +22,7 @@
     "></script>
   </head>
   <body>
+    <div id="screen" style="top:0px;left:0px; display:none; position:fixed; width: 100%; height: 100%; background-color: rgba(40, 40, 40, 0.5)"></div>
     <script type="importmap">
         {
             "imports": {
@@ -69,14 +41,10 @@
             }
         }
     </script>
-    <canvas id="image"></canvas>
     <script type="module" src="demo.js"></script>
     <div class="windowGroup">
-      <div id="window1" class="window fade" style="display: initial; width: 220px">
-        <div class="purple" id="window1bar">
-          <p class="windowTitle" style="font-size:0.8em; margin-bottom:0px" >Tools</p>
-        </div>
-        <div id="toolbarContents" style="padding:10px; min-height: 120px">
+      <wired-card id="window1" style="position: fixed; top: 20px; left: 20px;">
+        <div id="toolbarContents" style="padding:10px; min-height: 120px; width: 220px; height: 150px">
           
         </div>
         <hr/>
@@ -84,8 +52,7 @@
           <tr>
             <td><mwc-icon>filter_alt</mwc-icon></td>
             <td>
-              <wired-combo id="operations">
-                <!--<wired-item value="">Blur</wired-item>-->
+              <wired-combo id="operations" style="font-size: 0.7em">
               </wired-combo>
             </td>
           </tr>
@@ -114,7 +81,7 @@
           ></toolcool-color-picker>
           <mwc-icon id="color-switch" style="padding-top:50px" >change_circle</mwc-icon>
         </div>
-        <wired-tabs selected="Wheel" style="box-shadow: 8px 8px 6px -6px black; background-color: #CCCCCC;">
+        <wired-tabs selected="Wheel" style=" background-color: #FEFEFE;">
           <wired-tab name="Wheel">
             <color-disc size="200" format="hex" id="wheel"></color-disc>
             <div style="height:200px"></div>
@@ -131,33 +98,45 @@
             No palette 
           </wired-tab>
         </wired-tabs>
-      </div>
-      <div id="window2" class="window fade" >
-        <div class="purple" id="window2bar">
-          <p class="windowTitle" style="margin: 0px" >Filter Preview</p>
-        </div>
+        <p style="position:absolute; margin-top: -8px; font-size: 0.8em">©2013-2023 Abbey Hawk Sparrow</p>
+      </wired-card>
+      <wired-dialog id="window2" style="position:fixed">
+        <img 
+          id="filterSpinner"
+          alt="working..."
+          src="images/loading.gif" 
+          width="50" style="position:absolute; display:none; margin-top:10px; margin-left:10px">
         <div id="filterContents">
           
         </div>
-      </div>
+      </wired-dialog>
     </div>
-    <!--<script src="https://unpkg.com/window-engine@latest/dist/window-engine.min.js"></script>-->
+    <canvas class="surface" id="image"></canvas>
     <script type="module">
         
         import { windrag } from 'https://cdn.jsdelivr.net/npm/windrag';
-        const window1 = windrag.create('#window1', '#window1bar');
-        const window2 = windrag.create('#window2', '#window2bar');
+        //const window1 = windrag.create('#window1', '#window1bar');
+        const window1 = windrag.create('#window1', '#window1', {
+          position: 'fixed',
+          display:'none'
+        });
+        const window2 = windrag.create('#window2', '#window2');
         const window1El = document.getElementById('window1');
         let lastLeft = null;
         let lastWidth = null;
         let lastTop = null;
         let lastHeight = null;
-        let width = window.innerWidth;
-        let height = window.innerHeight;
-        const window1Width = parseInt(window1El.style.width);
-        const window1Height = parseInt(window1El.style.height);
-        window1El.style.top = (height - (10 + window1Height))+'px';
-        window1El.style.left = (width - (10 + window1Width))+'px';
+        setTimeout(()=>{
+          let width = window.innerWidth;
+          let height = window.innerHeight;
+          const style = window.getComputedStyle(window1El);
+          const window1Width = parseInt(style.width);
+          const window1Height = parseInt(style.height);
+          //console.log( height, window1Height , parseInt(style.width));
+          //window1El.style.top = (height - (10 + window1Height))+'px';
+          //window1El.style.left = (width - (10 + window1Width))+'px';
+          window1El.style.display = 'fixed';
+        }, 0);
         //*/
     </script>
   </body>
