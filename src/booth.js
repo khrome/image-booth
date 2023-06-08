@@ -19,7 +19,9 @@ import { Negative } from './operations/negative.js';
 
 //tools
 import { Paintbrush } from './tools/paintbrush.js';
+import { Draw } from './tools/draw.js';
 import { SampleColor } from './tools/sample-color.js';
+import { FloodFill } from './tools/flood-fill.js';
 
 //brushes
 import { Round5px } from './brushes/5px-round.js';
@@ -45,6 +47,15 @@ export class Booth{
         this.currentTool = null;
         this.currentBrush = null;
         (new Emitter()).onto(this);
+    }
+    
+    working(value){
+        const el = document.getElementById('working');
+        if(value){
+            el.style.display = 'block';
+        }else{
+            el.style.display = 'none';
+        }
     }
     
     setForeground(color){
@@ -207,7 +218,9 @@ booth.use(Negative);
 
 //Tools
 booth.use(Paintbrush);
+booth.use(Draw);
 booth.use(SampleColor);
+booth.use(FloodFill);
 
 //Brushes
 booth.use(Square1px);

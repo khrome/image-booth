@@ -26,15 +26,21 @@ const image = booth.newImage({
             booth.currentTool = booth.tools['paintbrush']
             return true;
         }},
-        {name: 'pencil', icon: 'edit'},
-        {name: 'floodfill', icon: 'format_color_fill'},
+        {name: 'pencil', icon: 'edit', click: ()=>{
+            booth.currentTool = booth.tools['draw']
+            return true;
+        }},
+        {name: 'floodfill', icon: 'format_color_fill', click: ()=>{
+            booth.currentTool = booth.tools['flood-fill']
+            return true;
+        }},
         {name: 'sample', icon: 'colorize', click: ()=>{
             booth.currentTool = booth.tools['sample-color']
             return true;
         }},
-        {name: 'import', icon: 'add_photo_alternate'},
+        /* {name: 'import', icon: 'add_photo_alternate'},
         {name: 'magic-wand', icon: 'auto_fix_high'},
-        {name: 'text', icon: 'text_fields'},
+        {name: 'text', icon: 'text_fields'},*/
         {name: 'clone', icon: 'approval'},
         {name: 'print', icon: 'print', click: ()=>{
             window.print();

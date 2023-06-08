@@ -17,7 +17,6 @@ export const url = (location, metaUrl)=>{
 export const buildFilterPreview = (action, container, image)=>{
     const label = action.getLabel();
     const controls = action.getControls();
-    console.log('CONTROLS>', controls);
     while(container.children.length) container.children[container.children.length-1].remove();
     const layout = document.createElement('table');
     layout.setAttribute('style', 'width:100%')

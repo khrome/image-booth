@@ -21,6 +21,8 @@ body{
   background-image: url("images/sketch-check.png");
   background-repeat: repeat;
   background-size: 300px 300px;
+  overscroll-behavior-y: none;
+  overscroll-behavior-x: none;
 }
 #window2, #screen{
   z-index: 200;
