@@ -36,6 +36,10 @@ import { SoftRound15px } from './brushes/15px-soft-round.js';
 import { SoftRound20px } from './brushes/20px-soft-round.js'; 
 import { SoftRound40px } from './brushes/40px-soft-round.js';
 
+//generators
+import { TinyTextureTumbler } from './generators/tiny-texture-tumbler.js';
+import { Noise } from './generators/noise.js';
+
 import * as defaultEngine from './engine.js';
 import { Emitter } from 'extended-emitter/extended-emitter.mjs';
 
@@ -255,3 +259,7 @@ booth.use(SoftRound10px);
 booth.use(SoftRound15px);
 booth.use(SoftRound20px);
 booth.use(SoftRound40px);
+
+//Generators
+booth.use(TinyTextureTumbler);
+booth.use(Noise);

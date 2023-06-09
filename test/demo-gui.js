@@ -42,6 +42,16 @@ export const buildFilterPreview = (action, container, image)=>{
                 typeof results[key] === 'string' && 
                 results[key] === `${parseFloat(results[key])}`
             ) results[key] = parseFloat(results[key]);
+            if(
+                typeof results[key] === 'string' && 
+                controls[key].json
+            ){
+                results[key] = results[key].replace(/\$WIDTH/g, image.width()).replace(/\$HEIGHT/g, image.height());
+                console.log('REPLACED', results[key])
+                results[key] = JSON.parse(
+                    results[key]
+                );
+            }
         });
         return results;
     }
@@ -109,6 +119,16 @@ export const buildFilterPreview = (action, container, image)=>{
                 });
             }
         }
+        if(control.json){
+            elementText = `<wired-textarea id="control-${key}" style="font-size: 0.7em">${control.value}</wired-textarea>`;
+            post = (controlEl, valueEl)=>{
+                controlEl.addEventListener('blur', (event)=>{
+                    setTimeout(()=>{
+                        applyFilterToPreview();
+                    });
+                });
+            }
+        }
         row.innerHTML = `<td><label style="margin-right:10px">${key}</label></td><td>${elementText}</td>`
         settings.appendChild(row);
         const controlEl = document.getElementById(`control-${key}`);
@@ -142,7 +162,7 @@ export const buildFilterPreview = (action, container, image)=>{
     })
     settings.addEventListener('mousedown', (event)=>{
         event.stopPropagation();
-        event.preventDefault();
+        //event.preventDefault();
         return false;
     });
     setTimeout(()=>{

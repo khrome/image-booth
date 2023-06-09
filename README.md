@@ -1,6 +1,8 @@
 ImageBooth.js
 ==============
-ImageBooth is a javascript layered image convolution and painting library written on top of the canvas abstraction that runs on the browser or the server and is written in native, browser compatible, ES6 modules.
+ImageBooth is a javascript [raster graphics](https://en.wikipedia.org/wiki/Raster_graphics_editor) [layered](https://en.wikipedia.org/wiki/Layers_(digital_image_editing)) [image convolution](https://en.wikipedia.org/wiki/Kernel_(image_processing)#Convolution) and [painting](https://en.wikipedia.org/wiki/Image_editing) library written on top of the canvas abstraction that runs on the browser or the server and is written in native, browser compatible, ES6 modules.
+
+The ultimate goal is being able to open [PSDs](https://www.adobe.com/devnet-apps/photoshop/fileformatashtml/) and run [actions](https://helpx.adobe.com/photoshop/using/actions-actions-panel.html), in addition to basic editing needs both both server and client use cases.
 
 Usage
 -----
@@ -10,7 +12,7 @@ In it's simplest form it looks like this:
 ```javascript
 import { Image } from 'image-booth';
 (async ()=>{
-    //load an image from a remote location
+    // load an image from a remote location
     const image = new Image({ source: 'http://some.web/location' });
     await image.ready; //wait for the remote source to load
     image.currentLayer.act('negative'); //photonegative the image
@@ -21,22 +23,25 @@ import { Image } from 'image-booth';
 Supported actions are:
 
 - Operations
-    - Negative
-    - Brightness/Contrast
+    - Negative - Take the [photonegative](https://en.wikipedia.org/wiki/Negative_(photography)) of the image.
+    - Brightness/Contrast - Adjust the relative [brightness](https://en.wikipedia.org/wiki/Brightness) and [contrast](https://en.wikipedia.org/wiki/Contrast_(vision)) of the image
 - Filters
-    - Gaussian Blur
-    - Emboss
-    - High Pass
-    - Laplacian
-    - Sharpen
-    - Sobel Edge Detector
+    - Gaussian Blur - [smoothing](https://en.wikipedia.org/wiki/Gaussian_blur) the image using a gaussian function
+    - Emboss - A false [relief effect](https://en.wikipedia.org/wiki/Image_embossing).
+    - High Pass - A [high Pass filter](https://en.wikipedia.org/wiki/High-pass_filter) to manipulate noise in an image.
+    - Laplacian - The [spatial derivative of the image](https://en.wikipedia.org/wiki/Discrete_Laplace_operator)
+    - Sharpen - Uses a kernel to [sharpen the original image](https://en.wikipedia.org/wiki/Unsharp_masking)
+    - Sobel Edge Detector - Uses the [sobel operator](https://en.wikipedia.org/wiki/Sobel_operator) to highlight "edges" within the image
+- Generators
+    - Noise - Allows you to generate [Simplex Noise](https://en.wikipedia.org/wiki/Simplex_noise) and [Perlin Noise](https://en.wikipedia.org/wiki/Perlin_noise)
+    - Tiny Texture Tumbler - Uses [TTT](https://phoboslab.org/ttt/#W1szMiwzMiwxMzEzNSwwLDEsMSwzMCwzMCw2NTUyOCw4LDEzMTM1LDIsNTI0MTksMSwyLDUsMl0sWzMyLDMyLDEzMTM1LDEsMiwyLDQsNCw4LDgsNjU1MjQsNSw4NDU4LDQsMCwwLDAsMzIsMzIsNV1d) to [generate progressive textures](https://phoboslab.org/log/2021/09/q1k3-making-of) and adds a `$HEIGHT` and `$WIDTH` value to allow you to easily fill the canvas.
     
 The library also supports paint tools, used with different brushes:
-- Paintbrush
-- Draw
-- Flood Fill
-- Sample Color
-- Clone
+- Paintbrush - A [digital painting](https://en.wikipedia.org/wiki/Digital_painting) brush that supports a variety of brushes 
+- Draw - A simple single pixel line drawing tool.
+- Flood Fill - A [paintbucket](https://en.wikipedia.org/wiki/Flood_fill) operation.
+- Sample Color - An [eyedropper](https://en.wikipedia.org/wiki/Color_picker#Eyedropper) tool for sampling colors within the image.
+- Clone - [Clone](https://en.wikipedia.org/wiki/Image_editing#Stamp_Clone_Tool) from one part of your image to another.
 
 Testing
 -------
