@@ -16,6 +16,7 @@ export class Layer{
 
             if( options.image || options.source ){
                 this.pixels = this.context2d.getImageData(0, 0, width, height);
+                console.log(this.pixels, width, height)
             }else{
                 //clear canvas
                 var data = this.context2d.getImageData(0,0, this.width, this.height);
@@ -29,6 +30,7 @@ export class Layer{
                 this.pixels = data;
             }
         }
+        console.log('$$$$', options);
         if(options.source){
             this.ready = new Promise(async (resolve, reject)=>{
                 try{
@@ -38,16 +40,30 @@ export class Layer{
                 }catch(ex){ console.log('>>>', ex); reject(ex) }
             });
         }else{
-            this.ready = new Promise(async (resolve, reject)=>{
-                try{
-                    this.buffer = new Canvas({ 
-                        height: this.height || options.height, 
-                        width: this.width || options.width
-                    });
-                    setFromCanvas();
-                    resolve(this.pixels);
-                }catch(ex){ reject(ex) }
-            });
+            if(options.image){
+                this.ready = new Promise(async (resolve, reject)=>{
+                    try{
+                        this.buffer = new Canvas({ 
+                            height: options.image.height, 
+                            width: options.image.width 
+                        });
+                        setFromCanvas();
+                        resolve(this.pixels);
+                    }catch(ex){ reject(ex) }
+                });
+            }else{ //passing in a height and width and getting back an empty canvas
+                this.ready = new Promise(async (resolve, reject)=>{
+                    console.log('^^', this.height, options.height, this.width, options.width)
+                    try{
+                        this.buffer = new Canvas({ 
+                            height: this.height || options.height, 
+                            width: this.width || options.width
+                        });
+                        setFromCanvas();
+                        resolve(this.pixels);
+                    }catch(ex){ reject(ex) }
+                });
+            }
         }
     }
     

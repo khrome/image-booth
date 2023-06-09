@@ -46,8 +46,10 @@ export const buildFilterPreview = (action, container, image)=>{
                 typeof results[key] === 'string' && 
                 controls[key].json
             ){
-                results[key] = results[key].replace(/\$WIDTH/g, image.width()).replace(/\$HEIGHT/g, image.height());
-                console.log('REPLACED', results[key])
+                results[key] = results[key]
+                    .replace(/\$WIDTH/g, image.width())
+                    .replace(/\$HEIGHT/g, image.height())
+                ;
                 results[key] = JSON.parse(
                     results[key]
                 );
@@ -167,6 +169,10 @@ export const buildFilterPreview = (action, container, image)=>{
     });
     setTimeout(()=>{
         applyFilterToPreview();
+        setTimeout(()=>{
+            cancelFilter.updated({ has : () => false });
+            applyFilter.updated({ has : () => false });
+        }, 200);
     });
 }
 
