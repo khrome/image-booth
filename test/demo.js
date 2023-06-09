@@ -30,7 +30,6 @@ openForm.onsubmit = (e)=>{
                     const opts = { image };
                     open(opts);
                 }
-                console.log(data)
                 image.src = data;
               });
               reader.readAsArrayBuffer(imageInput.files[0]);
@@ -181,7 +180,7 @@ const open = (options)=>{
             changeForeground('#000000');
             changeBackground('#FFFFFF');
         }catch(ex){
-            console.log('###', ex, ex.message)
+            console.log('ERR', ex, ex.message)
         }
     })();
     return image;

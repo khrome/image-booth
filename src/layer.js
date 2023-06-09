@@ -16,7 +16,6 @@ export class Layer{
 
             if( options.image || options.source ){
                 this.pixels = this.context2d.getImageData(0, 0, width, height);
-                console.log(this.pixels, width, height)
             }else{
                 //clear canvas
                 var data = this.context2d.getImageData(0,0, this.width, this.height);
@@ -30,14 +29,13 @@ export class Layer{
                 this.pixels = data;
             }
         }
-        console.log('$$$$', options);
         if(options.source){
             this.ready = new Promise(async (resolve, reject)=>{
                 try{
                     this.buffer = await Canvas.load(options.source);
                     setFromCanvas();
                     resolve(this.pixels);
-                }catch(ex){ console.log('>>>', ex); reject(ex) }
+                }catch(ex){ reject(ex) }
             });
         }else{
             if(options.image){
@@ -53,7 +51,6 @@ export class Layer{
                 });
             }else{ //passing in a height and width and getting back an empty canvas
                 this.ready = new Promise(async (resolve, reject)=>{
-                    console.log('^^', this.height, options.height, this.width, options.width)
                     try{
                         this.buffer = new Canvas({ 
                             height: this.height || options.height, 
@@ -75,7 +72,6 @@ export class Layer{
     }
     
     stroke(tool, shape, brushName, controls, booth=defaultBooth){
-        console.log('?', brushName, booth.brushes)
         const brush = booth.brushes[brushName].kernel(controls);
         //todo: handle complex shapes/paths
         const newPixels = booth.tools[tool].stroke(
@@ -101,7 +97,6 @@ export class Layer{
         }
         var actor;
         if(registry['filter'] && (actor = registry['filter'][name]) ){
-            console.log('Filter('+name+'): ', actor);
             var newPixels = actor.act(result.pixels, options);
             result.pixels = newPixels;
         }else{

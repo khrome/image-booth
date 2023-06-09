@@ -75,23 +75,6 @@
         openDialog.onchange = evt => {
           if(openDialog.files[0]) imagePreview.src = URL.createObjectURL(openDialog.files[0]);
           window.previewUrl = imagePreview.src;
-          console.log(imagePreview.src);
-          var reader = new FileReader();
-          reader.addEventListener('load', function() {
-            try{
-              console.log('####');
-              var arrayBuffer = this.result,
-                array = new Uint8Array(arrayBuffer),
-                binaryString = Buffer.from(array).toString('hex');
-                  
-              console.log('*>', binaryString);
-                
-                //open({ image: imagePreview });
-            }catch(ex){
-              console.log(ex)
-            }
-          });
-          reader.readAsArrayBuffer(openDialog.files[0]);
         }
       </script>
       <wired-card id="window1" style="position: fixed; top: 20px; left: 20px; display: none">

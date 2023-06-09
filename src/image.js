@@ -10,7 +10,6 @@ var convolveBuffer;
 export class Image{
     constructor(options={}){
         this.options = options;
-        console.log('IC', options);
         this.layers = new EventedArray([]);
         this.engine = options.engine || engine;
         (new Emitter()).onto(this);
