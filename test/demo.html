@@ -32,7 +32,7 @@
       at some point we will custom build this atrocity to remove the error
     -->
     <script src="
-        http://localhost:8000/node_modules/file-saver/dist/FileSaver.js
+        /node_modules/file-saver/dist/FileSaver.js
     "></script>
   </head>
   <body>
@@ -47,7 +47,7 @@
                 "async-arrays/async-arrays.mjs": "/node_modules/async-arrays/async-arrays.mjs",
                 "extended-emitter/extended-emitter.mjs": "/node_modules/extended-emitter/extended-emitter.mjs",
                 "extended-emitter-es6": "/node_modules/extended-emitter-es6/extended-emitter-es6.js",
-                
+                "file-saver": "/node_modules/environment-safe-canvas/file-saver.js",
                 "sift": "/node_modules/sift/es5m/index.js",
                 "browser-or-node": "/node_modules/browser-or-node/src/index.js",
                 "module": "/node_modules/browser-or-node/src/index.js",
@@ -57,8 +57,9 @@
     </script>
     <script type="module" src="demo.js"></script>
     <div class="windowGroup">
-      <wired-card id="openFile" class="" style="position: fixed; top: 30%; height: 200px; width: 300px">
+      <wired-card id="openFile" class="" style="position: fixed; top: 30%; height: 250px; width: 300px">
       <form id="openForm" name="openForm" runat="server">
+          <wired-input id="imageUrl" name="imageUrl" style="width:100%; display: block"></wired-input>
           <input accept="image/*" type='file' id="imageInput">
           <img id="imagePreview" src="images/image.png" alt="your image">
           <div style="width: 40px; height: 40px; margin-left: 252px; margin-top: -30px">
@@ -72,9 +73,14 @@
       <script>
         const openDialog = document.getElementById('imageInput');
         const imagePreview = document.getElementById('imagePreview');
+        const imageUrl = document.getElementById('imageUrl');
         openDialog.onchange = evt => {
           if(openDialog.files[0]) imagePreview.src = URL.createObjectURL(openDialog.files[0]);
-          window.previewUrl = imagePreview.src;
+        }
+        imageUrl.onchange = evt => {
+          imagePreview.src = imageUrl.value;
+          //if(openDialog.files[0]) imagePreview.src = URL.createObjectURL(openDialog.files[0]);
+          //window.previewUrl = imagePreview.src;
         }
       </script>
       <wired-card id="window1" style="position: fixed; top: 20px; left: 20px; display: none">
@@ -175,6 +181,7 @@
           //window1El.style.top = (height - (10 + window1Height))+'px';
           //window1El.style.left = (width - (10 + window1Width))+'px';
           window1El.style.display = 'fixed';
+          document.getElementById('imageUrl').focus()
         }, 0);
         //*/
     </script>

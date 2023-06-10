@@ -30,9 +30,10 @@
         "array-events": "^1.1.0",
         "async-arrays": "^1.1.0",
         "canvas": "*",
-        "environment-safe-canvas": "^1.0.0",
+        "environment-safe-canvas": "^1.1.1",
         "extended-emitter": "^1.2.0",
-        "extended-emitter-es6": "^1.1.3"
+        "extended-emitter-es6": "^1.1.3",
+        "file-saver": "^2.0.5"
     },
     "devDependencies": {
         "chai": "*",

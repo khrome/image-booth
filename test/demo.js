@@ -12,27 +12,34 @@ openForm.onsubmit = (e)=>{
             const imageInput = document.getElementById('imageInput');
             // ::Stares off a vast cliff into a canyon of refuse:: 
             /// "A little messy, right?"
-            var reader = new FileReader();
-            reader.addEventListener('load', function(){
-                var arrayBuffer = this.result,
-                  array = new Uint8Array(arrayBuffer),
-                  binaryString = Buffer.from(array).toString('base64');
-                const image = new Image();
-                const fileType = imageInput.files[0].name.split('.').pop();
-                let data = null;
-                switch(fileType.toLowerCase()){
-                    case 'png': data = `data:image/png;base64,${binaryString}`; break;
-                    case 'jpeg', 'jpg': data = `data:image/jpg;base64,${binaryString}`; break;
-                    case 'gif': data = `data:image/gif;base64,${binaryString}`; break;
-                    default: throw new Error(`Unsupported image type: ${fileType}`);
-                }
-                image.onload = ()=>{
-                    const opts = { image };
-                    open(opts);
-                }
-                image.src = data;
-              });
-              reader.readAsArrayBuffer(imageInput.files[0]);
+            if(imageInput.files[0]){
+                var reader = new FileReader();
+                reader.addEventListener('load', function(){
+                    var arrayBuffer = this.result,
+                      array = new Uint8Array(arrayBuffer),
+                      binaryString = Buffer.from(array).toString('base64');
+                    const image = new Image();
+                    const fileType = imageInput.files[0].name.split('.').pop();
+                    let data = null;
+                    switch(fileType.toLowerCase()){
+                        case 'png': data = `data:image/png;base64,${binaryString}`; break;
+                        case 'jpeg', 'jpg': data = `data:image/jpg;base64,${binaryString}`; break;
+                        case 'gif': data = `data:image/gif;base64,${binaryString}`; break;
+                        default: throw new Error(`Unsupported image type: ${fileType}`);
+                    }
+                    image.onload = ()=>{
+                        const opts = { image };
+                        open(opts);
+                    }
+                    image.src = data;
+                });
+                reader.readAsArrayBuffer(imageInput.files[0]);
+            }else{
+                const imageUrl = document.getElementById('imageUrl');
+                const options = { source: imageUrl.value };
+                console.log(options);
+                open(options);
+            }
         }catch(ex){
             console.log('ERROR', ex);
         }
