@@ -1,5 +1,7 @@
 ImageBooth.js
 ==============
+[ ![image](test/images/image-booth-screenshot.png) ](https://khrome.github.io/image-booth/)
+
 ImageBooth is a javascript [raster graphics](https://en.wikipedia.org/wiki/Raster_graphics_editor) [layered](https://en.wikipedia.org/wiki/Layers_(digital_image_editing)) [image convolution](https://en.wikipedia.org/wiki/Kernel_(image_processing)#Convolution) and [painting](https://en.wikipedia.org/wiki/Image_editing) library written on top of the canvas abstraction that runs on the browser or the server and is written in native, browser compatible, ES6 modules.
 
 The ultimate goal is being able to open [PSDs](https://www.adobe.com/devnet-apps/photoshop/fileformatashtml/) and run [actions](https://helpx.adobe.com/photoshop/using/actions-actions-panel.html), in addition to basic editing needs for both server and client use cases.
