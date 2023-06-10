@@ -31,7 +31,6 @@ export const saveImage = async (location, canvas, type='image/png', callback)=>{
         if(callback) callback(null, result);
         return result;
     }catch(ex){
-        console.log(callback)
         if(callback) callback(ex)
         else throw ex;
     }

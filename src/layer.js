@@ -35,19 +35,32 @@ export class Layer{
                     this.buffer = await Canvas.load(options.source);
                     setFromCanvas();
                     resolve(this.pixels);
-                }catch(ex){ console.log('>>>', ex); reject(ex) }
-            });
-        }else{
-            this.ready = new Promise(async (resolve, reject)=>{
-                try{
-                    this.buffer = new Canvas({ 
-                        height: this.height || options.height, 
-                        width: this.width || options.width
-                    });
-                    setFromCanvas();
-                    resolve(this.pixels);
                 }catch(ex){ reject(ex) }
             });
+        }else{
+            if(options.image){
+                this.ready = new Promise(async (resolve, reject)=>{
+                    try{
+                        this.buffer = new Canvas({ 
+                            height: options.image.height, 
+                            width: options.image.width 
+                        });
+                        setFromCanvas();
+                        resolve(this.pixels);
+                    }catch(ex){ reject(ex) }
+                });
+            }else{ //passing in a height and width and getting back an empty canvas
+                this.ready = new Promise(async (resolve, reject)=>{
+                    try{
+                        this.buffer = new Canvas({ 
+                            height: this.height || options.height, 
+                            width: this.width || options.width
+                        });
+                        setFromCanvas();
+                        resolve(this.pixels);
+                    }catch(ex){ reject(ex) }
+                });
+            }
         }
     }
     
@@ -59,7 +72,6 @@ export class Layer{
     }
     
     stroke(tool, shape, brushName, controls, booth=defaultBooth){
-        console.log('?', brushName, booth.brushes)
         const brush = booth.brushes[brushName].kernel(controls);
         //todo: handle complex shapes/paths
         const newPixels = booth.tools[tool].stroke(
@@ -85,7 +97,6 @@ export class Layer{
         }
         var actor;
         if(registry['filter'] && (actor = registry['filter'][name]) ){
-            console.log('Filter('+name+'): ', actor);
             var newPixels = actor.act(result.pixels, options);
             result.pixels = newPixels;
         }else{

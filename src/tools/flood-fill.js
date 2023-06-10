@@ -27,7 +27,6 @@ export class FloodFill extends Tool {
         stack.push([x, y, 'left']);
         var item, opacity;
         opacity = (options.opacity/100);
-        //console.log('flood')
         if(!options.amount) options.amount = 50;
         let pp = 0;
         while(stack.length > 0){

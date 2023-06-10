@@ -17,8 +17,9 @@ export class Image{
             try{
                 const layer = await this.newLayer({
                     source : options.source,
-                    width : options.width,
-                    height : options.height
+                    image : options.image,
+                    width : options.image?options.image.width:options.width,
+                    height : options.image?options.image.height:options.height
                 });
                 resolve(layer);
             }catch(ex){

@@ -130,7 +130,6 @@ export class Booth{
                 const y = event.y - rect.top;
                 const brush = this.currentBrush.kernel({});
                 setTimeout(()=>{ //detach from event
-                    console.log(this.cloneMeta, this.meta)
                     this.currentTool.paint(
                         image.focused.pixels,
                         x, 

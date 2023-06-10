@@ -24,6 +24,28 @@ body{
   overscroll-behavior-y: none;
   overscroll-behavior-x: none;
 }
+#openFile{
+  position: fixed; 
+  top: 30%; 
+  height: 200px; 
+  width: 300px;
+}
+#openFile input[type="file"]{
+  position:absolute;
+  height: 180px; 
+  width: 280px;
+  opacity: 0.01;
+}
+#openFile img{
+  height: 180px;
+  max-width: 280px;
+  display: block; 
+  margin-left: auto;
+  margin-right: auto;
+}
+#fileOpenControlContainer{
+  position: absolute;
+}
 #window2, #screen{
   z-index: 200;
 }
@@ -31,12 +53,7 @@ body{
   display: block;
   margin: auto;
 }
-#window1{
-  color: #000000; 
-  /*max-width: 80px;*/
-  background-color: #FEFEFE;
-}
-#window2{
+#window1, #window2, #openFile{
   color: #000000; 
   /*max-width: 80px;*/
   background-color: #FEFEFE;
