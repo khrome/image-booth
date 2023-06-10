@@ -1,7 +1,7 @@
 {
     "name": "image-booth",
     "homepage": "https://github.com/khrome/image-booth",
-    "version": "0.0.1-alpha",
+    "version": "0.0.1",
     "main": "image-booth.js",
     "description": "A port of ImageBooth from Protolus with pluggable render engine and fewer deps.",
     "keywords": [
