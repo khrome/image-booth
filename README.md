@@ -2,7 +2,7 @@ ImageBooth.js
 ==============
 [ ![image](https://raw.githubusercontent.com/khrome/image-booth/master/test/images/image-booth-screenshot.png) ](https://khrome.github.io/image-booth/)
 
-ImageBooth is a javascript [raster graphics](https://en.wikipedia.org/wiki/Raster_graphics_editor) [layered](https://en.wikipedia.org/wiki/Layers_(digital_image_editing)) [image convolution](https://en.wikipedia.org/wiki/Kernel_(image_processing)#Convolution) and [painting](https://en.wikipedia.org/wiki/Image_editing) library written on top of the canvas abstraction that runs on the browser or the server and is written in native, browser compatible, ES6 modules.
+ImageBooth is a javascript [raster graphics](https://en.wikipedia.org/wiki/Raster_graphics_editor) [layered](https://en.wikipedia.org/wiki/Layers_(digital_image_editing)) [image convolution](https://en.wikipedia.org/wiki/Kernel_(image_processing)#Convolution) and [painting](https://en.wikipedia.org/wiki/Image_editing) library written on top of the canvas abstraction that runs on the browser or the server and is written in native, browser compatible, ES6 modules. For compatibility (I'm looking at you, electron) they are also available as a commonjs module, built in `/dist`.
 
 The ultimate goal is being able to open [PSDs](https://www.adobe.com/devnet-apps/photoshop/fileformatashtml/) and run [actions](https://helpx.adobe.com/photoshop/using/actions-actions-panel.html), in addition to basic editing needs for both server and client use cases.
 
@@ -13,6 +13,7 @@ In it's simplest form it looks like this:
 
 ```javascript
 import { Image } from 'image-booth';
+// or: const { Image } = require('image-booth');
 (async ()=>{
     // load an image from a remote location
     const image = new Image({ source: 'http://some.web/location' });

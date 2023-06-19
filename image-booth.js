@@ -1,4 +1,4 @@
-import { Booth, default as boothDefault } from './src/booth.js';
-import { Image } from './src/image.js';
-export default boothDefault;
-export { Image, Booth };
+const { Booth, default: boothDefault } = require('./dist/booth.js');
+const { Image } = require('./dist/image.js');
+module.exports = { Image, Booth };
+module.exports.default = boothDefault;

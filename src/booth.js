@@ -41,7 +41,7 @@ import { TinyTextureTumbler } from './generators/tiny-texture-tumbler.js';
 import { Noise } from './generators/noise.js';
 
 import * as defaultEngine from './engine.js';
-import { Emitter } from 'extended-emitter/extended-emitter.mjs';
+import { Emitter } from 'extended-emitter';
 
 const metalist = ['Shift', 'Control', 'Alt', 'Meta'];
 

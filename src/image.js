@@ -1,6 +1,6 @@
 import { Canvas } from 'environment-safe-canvas';
-import { Emitter } from 'extended-emitter/extended-emitter.mjs';
-import { EventedArray } from 'array-events/array-events.mjs';
+import { Emitter } from 'extended-emitter';
+import { EventedArray } from 'array-events';
 import * as engine from './engine.js';
 
 var registry = {};
