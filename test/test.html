@@ -3,7 +3,7 @@
   <head>
     <title>Mocha Tests</title>
     <link rel="stylesheet" href="../node_modules/mocha/mocha.css">
-    <link rel="stylesheet" href="./demo/style.css">
+    <link rel="stylesheet" href="./demo.css">
   </head>
   <body>
     <div class="game-world"></div>
@@ -15,13 +15,29 @@
             "imports": {
                 "chai": "/node_modules/chai/chai.js",
                 "environment-safe-chai": "/node_modules/environment-safe-chai/environment-safe-chai.js",
-                "environment-safe-canvas": "/node_modules/environment-safe-canvas/environment-safe-canvas.js",
+                "environment-safe-canvas": "/node_modules/environment-safe-canvas/environment-safe-canvas.mjs",
+                "environment-safe-canvas/environment-safe-canvas.mjs": "/node_modules/environment-safe-canvas/environment-safe-canvas.mjs",
+                "extended-emitter": "/node_modules/extended-emitter/extended-emitter.mjs",
+                "extended-emitter/extended-emitter.mjs": "/node_modules/extended-emitter/extended-emitter.mjs",
+                "extended-emitter-es6": "/node_modules/extended-emitter/extended-emitter.mjs",
+                "extended-emitter-es6/extended-emitter.mjs": "/node_modules/extended-emitter/extended-emitter.mjs",
+                "array-events": "/node_modules/array-events/array-events.mjs",
+                "array-events/array-events.mjs": "/node_modules/array-events/array-events.mjs",
+                "async-arrays": "/node_modules/async-arrays/async-arrays.mjs",
+                "async-arrays/async-arrays.mjs": "/node_modules/async-arrays/async-arrays.mjs",
+                "sift": "/node_modules/sift/es5m/index.js",
                 "module": "/node_modules/browser-or-node/src/index.js",
+                "node:events": "/node_modules/extended-emitter/node-events.mjs",
+                "fs": "/node_modules/browser-or-node/src/index.js",
+                "path": "/node_modules/browser-or-node/src/index.js",
                 "browser-or-node": "/node_modules/browser-or-node/src/index.js"
             }
         }
     </script>
-    <script type="module" src="test.js"></script>
+    <script src="
+        https://cdn.jsdelivr.net/npm/wolfy87-eventemitter@5.2.9/EventEmitter.min.js
+    "></script>
+    <script type="module" src="test.mjs"></script>
     <script type="module">
       mocha.run();
     </script>
