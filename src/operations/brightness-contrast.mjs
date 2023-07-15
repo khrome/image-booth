@@ -1,4 +1,4 @@
-import { Canvas } from 'environment-safe-canvas';
+import { Canvas } from '@environment-safe/canvas';
 import { Operation } from '../operation.mjs';
 export class BrightnessContrast extends Operation{
     constructor(name='brightness-contrast', engine){

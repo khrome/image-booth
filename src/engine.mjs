@@ -1,4 +1,4 @@
-import { Canvas } from 'environment-safe-canvas/environment-safe-canvas.mjs';
+import { Canvas } from '@environment-safe/canvas';
 import { Layer } from './layer.mjs';
 
 import { darken } from './compositors/darken.mjs';

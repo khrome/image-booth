@@ -17,10 +17,10 @@
      "license": "MIT",
      "scripts": {
           "lint": "./node_modules/.bin/eslint *.js src/*.js test/*.js",
-          "test": "npm run imports-test; npm run require-test; npm run browser-test",
+          "test": "npm run import-test; npm run require-test; npm run browser-test",
           "build-commonjs": "./node_modules/.bin/babel src --out-dir dist --out-file-extension .cjs",
           "require-test": "./node_modules/.bin/mocha test/test.cjs;",
-          "imports-test": "./node_modules/.bin/mocha test/test.mjs;",
+          "import-test": "./node_modules/.bin/mocha test/test.mjs;",
           "browser-test": "open http://localhost:8000/test/test.html; npx http-server -p 8000",
           "demo": "open http://localhost:8000/test/demo.html; npx http-server -p 8000",
           "container-test": "docker build . -t submesh-treadmill -f ./containers/test.dockerfile; docker logs --follow \"$(docker run -d submesh-treadmill)\""
@@ -30,6 +30,7 @@
           "url": "git@github.com:khrome/image-booth.git"
      },
      "dependencies": {
+          "@environment-safe/canvas": "^3.0.1",
           "array-events": "^2.0.1",
           "async-arrays": "^1.1.0",
           "canvas": "*",
@@ -41,6 +42,7 @@
           "@babel/cli": "^7.22.5",
           "@babel/core": "^7.22.5",
           "@babel/plugin-transform-modules-commonjs": "^7.22.5",
+          "@environment-safe/chai": "^0.1.0",
           "babel-plugin-search-and-replace": "^1.1.1",
           "chai": "*",
           "environment-safe-chai": "^0.0.1",

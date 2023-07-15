@@ -1,4 +1,4 @@
-import { Canvas } from 'environment-safe-canvas';
+import { Canvas } from '@environment-safe/canvas';
 import { Filter } from '../filter.mjs';
 export class Laplacian extends Filter{
     constructor(name='detect-gradient', engine){

@@ -1,4 +1,4 @@
-import { Canvas } from 'environment-safe-canvas';
+import { Canvas } from '@environment-safe/canvas';
 import { Emitter } from 'extended-emitter/extended-emitter.mjs';
 import { EventedArray } from 'array-events/array-events.mjs';
 import * as engine from './engine.mjs';

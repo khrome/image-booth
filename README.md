@@ -46,6 +46,25 @@ The library also supports paint tools, used with different brushes:
 - Sample Color - An [eyedropper](https://en.wikipedia.org/wiki/Color_picker#Eyedropper) tool for sampling colors within the image.
 - Clone - [Clone](https://en.wikipedia.org/wiki/Image_editing#Stamp_Clone_Tool) from one part of your image to another.
 
+Roadmap
+-------
+
+- [ ] - expose compositors
+- [ ] - expose tool options
+- [ ] - selection model
+- [ ] - non-destructive move operation
+- [ ] - convolve brush
+- [ ] - masks
+- [ ] - channel masks
+- [ ] - plugins
+- [ ] - intelligent scissors
+- [ ] - sprite brush
+- [ ] - dynamic media
+- [ ] - tablet support
+- [ ] - text layers (fabric.js?)
+- [ ] - shape layers (fabric.js?)
+- [ ] - vector file import (svg, pdf, eps, etc)
+
 Testing
 -------
 

@@ -1,4 +1,4 @@
-import booth from '../image-booth.js';
+import booth from '../image-booth.mjs';
 // a *very* simple vanilla js GUI for demo purposes
 export const url = (location, metaUrl)=>{
     if(

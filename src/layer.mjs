@@ -1,4 +1,4 @@
-import { Canvas } from 'environment-safe-canvas/environment-safe-canvas.mjs';
+import { Canvas } from '@environment-safe/canvas';
 import * as engine from './engine.mjs';
 import defaultBooth from './booth.mjs';
 export class Layer{

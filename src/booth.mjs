@@ -1,4 +1,4 @@
-import { Canvas } from 'environment-safe-canvas/environment-safe-canvas.mjs';
+import { Canvas } from '@environment-safe/canvas';
 
 //core
 import { Image } from './image.mjs';

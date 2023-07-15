@@ -1,4 +1,4 @@
-import { Canvas } from 'environment-safe-canvas';
+import { Canvas } from '@environment-safe/canvas';
 import { Operation } from '../operation.mjs';
 export class Negative extends Operation{
     constructor(name='negative', engine){

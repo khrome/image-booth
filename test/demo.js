@@ -1,9 +1,9 @@
-import { Canvas } from 'environment-safe-canvas';
-import booth from '../image-booth.js';
+import { Canvas } from '@environment-safe/canvas';
+import booth from '../image-booth.mjs';
 import { buildFilterPreview, url, setupColorInteractions } from './demo-gui.js';
 const openForm = document.getElementById('openForm');
-import { Game, Discovery } from './game.js';
-const client = new Discovery('game-name');
+//import { Game, Discovery } from './game.js';
+//const client = new Discovery('game-name');
 
 openForm.onsubmit = (e)=>{
     e.preventDefault(); 

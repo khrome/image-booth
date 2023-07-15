@@ -322,7 +322,7 @@ export const perlin3 = function(x, y, z) {
      return canvas;
  }
   
- import { Canvas } from 'environment-safe-canvas';
+ import { Canvas } from '@environment-safe/canvas';
  import { Generator } from '../generator.mjs';
  export class Noise extends Generator{
      constructor(name='noise', engine){
