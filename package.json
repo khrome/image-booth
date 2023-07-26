@@ -43,10 +43,9 @@
           "@babel/core": "^7.22.5",
           "@babel/plugin-transform-modules-commonjs": "^7.22.5",
           "@environment-safe/chai": "^0.1.0",
-          "@open-automaton/moka": "^0.0.3",
+          "@open-automaton/moka": "^0.0.4",
           "babel-plugin-search-and-replace": "^1.1.1",
           "chai": "*",
-          "environment-safe-chai": "^0.0.1",
           "mocha": "*",
           "wing-kong": "^0.0.1"
      },
