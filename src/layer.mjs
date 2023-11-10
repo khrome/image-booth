@@ -45,6 +45,9 @@ export class Layer{
                             height: options.image.height, 
                             width: options.image.width 
                         });
+                        //this.buffer.hidden=false;
+                        //document.body.appendChild(this.buffer);
+                        console.log('layer', this.buffer)
                         setFromCanvas();
                         resolve(this.pixels);
                     }catch(ex){ reject(ex) }
@@ -80,6 +83,22 @@ export class Layer{
             shape.y,
             shape.x2,
             shape.y2,
+            brush,
+            controls
+        );
+        
+        this.pixels = newPixels;
+        this.context2d.putImageData(newPixels, 0, 0, 0, 0, this.pixels.width, this.pixels.height);
+        this.dirty = true;
+    }
+    
+    paint(tool, shape, brushName, controls, booth=defaultBooth){
+        const brush = booth.brushes[brushName].kernel(controls);
+        //todo: handle complex shapes/paths
+        const newPixels = booth.tools[tool].paint(
+            this.pixels, 
+            shape.x, 
+            shape.y,
             brush,
             controls
         );

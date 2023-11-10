@@ -1,5 +1,5 @@
 const chai = require('chai');
-const { Canvas } = require('environment-safe-canvas');
+const { Canvas } = require('@environment-safe/canvas');
 const should = chai.should();
 const fs = require('fs');
 const path = require('path');

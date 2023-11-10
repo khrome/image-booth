@@ -118,7 +118,7 @@ const open = (options)=>{
                     window.print();
                 }},
                 {name: 'save', icon: 'get_app', click: ()=>{
-                    image.save();
+                    image.save('download.png');
                 }},
                 {name: 'cloud', icon: 'backup'},
                 {name: 'settings', icon: 'settings'},

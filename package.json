@@ -1,55 +1,104 @@
 {
-     "name": "image-booth",
-     "homepage": "https://github.com/khrome/image-booth",
-     "version": "0.1.0",
-     "main": "image-booth.cjs",
-     "module": "image-booth.mjs",
-     "description": "A port of ImageBooth from Protolus with pluggable render engine and fewer deps.",
-     "keywords": [
-          "image",
-          "processing"
-     ],
-     "author": "Abbey Hawk Sparrow <@khrome> (http://patternweaver.com)",
-     "contributors": [],
-     "bugs": {
-          "url": "https://github.com/khrome/image-booth/issues"
-     },
-     "license": "MIT",
-     "scripts": {
-          "lint": "./node_modules/.bin/eslint *.js src/*.js test/*.js",
-          "test": "npm run import-test; npm run require-test; npm run browser-test",
-          "build-commonjs": "./node_modules/.bin/babel src --out-dir dist --out-file-extension .cjs",
-          "require-test": "./node_modules/.bin/mocha test/test.cjs;",
-          "import-test": "./node_modules/.bin/mocha test/test.mjs;",
-          "browser-test": "open http://localhost:8000/test/test.html; npx http-server -p 8000",
-          "demo": "open http://localhost:8000/test/demo.html; npx http-server -p 8000",
-          "container-test": "docker build . -t submesh-treadmill -f ./containers/test.dockerfile; docker logs --follow \"$(docker run -d submesh-treadmill)\""
-     },
-     "repository": {
-          "type": "git",
-          "url": "git@github.com:khrome/image-booth.git"
-     },
-     "dependencies": {
-          "@environment-safe/canvas": "^3.0.1",
-          "array-events": "^2.0.1",
-          "async-arrays": "^1.1.0",
-          "canvas": "*",
-          "environment-safe-canvas": "^2.2.0",
-          "extended-emitter": "^1.3.2",
-          "file-saver": "^2.0.5"
-     },
-     "devDependencies": {
-          "@babel/cli": "^7.22.5",
-          "@babel/core": "^7.22.5",
-          "@babel/plugin-transform-modules-commonjs": "^7.22.5",
-          "@environment-safe/chai": "^0.1.0",
-          "@open-automaton/moka": "^0.0.4",
-          "babel-plugin-search-and-replace": "^1.1.1",
-          "chai": "*",
-          "mocha": "*",
-          "wing-kong": "^0.0.1"
-     },
-     "engines": {
-          "node": "*"
-     }
+    "name": "image-booth",
+    "homepage": "https://github.com/khrome/image-booth",
+    "version": "0.1.0",
+    "main": "image-booth.cjs",
+    "module": "image-booth.mjs",
+    "description": "A port of ImageBooth from Protolus with pluggable render engine and fewer deps.",
+    "keywords": [
+        "image",
+        "processing"
+    ],
+    "author": "Abbey Hawk Sparrow <@khrome> (http://patternweaver.com)",
+    "contributors": [],
+    "bugs": {
+        "url": "https://github.com/khrome/image-booth/issues"
+    },
+    "moka": {
+        "firefox": {
+            "engine": "@open-automaton/playwright-mining-engine",
+            "options": {
+                "type": "firefox"
+            }
+        },
+        "chrome": {
+            "engine": "@open-automaton/playwright-mining-engine",
+            "options": {
+                "type": "chromium"
+            }
+        },
+        "safari": {
+            "engine": "@open-automaton/playwright-mining-engine",
+            "options": {
+                "type": "webkit"
+            }
+        },
+        "stub": "node_modules/@open-automaton/moka/src/stub.mjs",
+        "stubs": [
+            "express",
+            "os",
+            "module",
+            "path"
+        ],
+        "shims": {
+            "chai": "node_modules/chai/chai.js",
+            "extended-emitter/extended-emitter.mjs": "node_modules/extended-emitter/extended-emitter.mjs",
+            "array-events/array-events.mjs": "node_modules/array-events/array-events.mjs",
+            "async-arrays/async-arrays.mjs": "node_modules/async-arrays/async-arrays.mjs",
+            "browser-or-node": "node_modules/browser-or-node/src/index.js",
+            "express": "node_modules/@open-automaton/moka/src/stub.mjs",
+            "module": "node_modules/@open-automaton/moka/src/stub.mjs",
+            "node:events": "test/lib/emitter.js",
+            "path": "node_modules/@open-automaton/moka/src/stub.mjs",
+            "fs": "node_modules/@open-automaton/moka/src/stub.mjs"
+        },
+        "global-shims": [
+            "../node_modules/wolfy87-eventemitter/EventEmitter.min.js"
+        ],
+        "require": "./src/require.mjs"
+    },
+    "license": "MIT",
+    "scripts": {
+        "lint": "./node_modules/.bin/eslint *.js src/*.js test/*.js",
+        "test": "npm run import-test; npm run require-test; npm run browser-test",
+        "build-commonjs": "./node_modules/.bin/babel src --out-dir dist --out-file-extension .cjs",
+        "require-test": "./node_modules/.bin/mocha test/test.cjs;",
+        "import-test": "moka test/test.mjs;",
+        "headless-browser-test": "npm run headless-chrome-test; npm run headless-firefox-test; npm run headless-safari-test",
+        "headless-chrome-test": "moka --server . --browser chrome test/test.mjs",
+        "headless-firefox-test": "moka --server . --browser firefox test/test.mjs",
+        "headless-safari-test": "moka --server . --browser safari test/test.mjs",
+        "browser-test": "moka --server . --local-browser test/test.mjs",
+        "old-browser-test": "open http://localhost:8000/test/test.html; npx http-server -p 8000",
+        "demo": "open http://localhost:8000/test/demo.html; npx http-server -p 8000",
+        "container-test": "docker build . -t submesh-treadmill -f ./containers/test.dockerfile; docker logs --follow \"$(docker run -d submesh-treadmill)\""
+    },
+    "repository": {
+        "type": "git",
+        "url": "git@github.com:khrome/image-booth.git"
+    },
+    "dependencies": {
+        "@environment-safe/canvas": "^4.1.0",
+        "array-events": "^2.0.1",
+        "async-arrays": "^1.1.0",
+        "canvas": "*",
+        "extended-emitter": "^1.3.2",
+        "file-saver": "^2.0.5"
+    },
+    "devDependencies": {
+        "@babel/cli": "^7.22.5",
+        "@babel/core": "^7.22.5",
+        "@babel/plugin-transform-modules-commonjs": "^7.22.5",
+        "@environment-safe/chai": "^0.1.0",
+        "@environment-safe/file": "^0.2.1",
+        "@open-automaton/moka": "^0.5.0",
+        "babel-plugin-search-and-replace": "^1.1.1",
+        "chai": "*",
+        "detect-browser": "^5.3.0",
+        "mocha": "*",
+        "wing-kong": "^0.0.1"
+    },
+    "engines": {
+        "node": "*"
+    }
 }

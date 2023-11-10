@@ -86,8 +86,10 @@ export class Image{
     save(filename, cb){ //composite
         return new Promise(async (resolve, reject)=>{
             try{
-                var canvas = this.composite('canvas');
-                await Canvas.save(filename, canvas);
+                const canvas = this.composite('canvas');
+                const file = await Canvas.toFile(filename, canvas);
+                await file.save();
+                //await Canvas.save(filename, canvas);
                 resolve(canvas);
             }catch(ex){
                 reject(ex);

@@ -14,10 +14,12 @@ export class Tool {
     
     stroke(layer, x, y, x2, y2, brush, controls={}){
         const distanceBetweenPoints = controls.spacing || 3;
+        console.log('DIST', distanceBetweenPoints)
         const diffX = x2-x;
         const diffY = y2-y;
         const distance = Math.sqrt( diffX*diffX + diffY*diffY );
         const numPoints = Math.ceil(distance / distanceBetweenPoints);
+        console.log('DIST', distanceBetweenPoints, distance, 'NUM', numPoints)
         const xAdjust = (x2-x)/numPoints;
         const yAdjust = (y2-y)/numPoints;
         let lcv=0;
@@ -25,6 +27,7 @@ export class Tool {
         for(;lcv <= numPoints; lcv++){
             thisX = x+(lcv*xAdjust);
             thisY = y+(lcv*yAdjust);
+            console.log('drew a point', thisX, thisY);
             this.paint(
                 layer,
                 thisX, 

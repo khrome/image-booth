@@ -181,8 +181,9 @@ export const composite = function(layers, height, width, returnType = 'pixels'){
     //var width = layers[0].width;
     var buffer = new Canvas({ height, width });
     var context = buffer.getContext('2d', { willReadFrequently: true });
-    var pixels = context.getImageData(0,0, width, height);
-    layers.forEach(function(layer, index){
+    //var pixels = context.getImageData(0,0, width, height);
+    var pixels = layers[0].pixels;
+    layers.slice(1).forEach(function(layer, index){
         if(!layer.pixels) throw new Error('this layer has no pixels');
         pixels = merge(pixels, layer.pixels, context);
     });

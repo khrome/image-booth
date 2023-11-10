@@ -5,7 +5,7 @@ export class Paintbrush extends Tool {
         super(name || 'paintbrush', engine)
     }
     
-    paint(pixels, x, y, brush, controls){
+    paint(pixels, x, y, brush, controls={}){
         try{
             var transparency = 0;
             var opaquness = 255 - transparency;
