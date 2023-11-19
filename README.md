@@ -51,7 +51,7 @@ Testing
 
 Roadmap
 -------
-- [ ] - headless browser testing
+- [x] - headless browser testing
 - [ ] - expose compositors
 - [ ] - expose tool options
 - [ ] - selection model
