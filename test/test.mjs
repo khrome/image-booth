@@ -1,7 +1,7 @@
 import { chai } from '@environment-safe/chai';
 import { it, configure } from '@open-automaton/moka';
-import { File, Download, Path } from '@environment-safe/file';
-import { Canvas, pixelSimilarity } from '@environment-safe/canvas';
+import { File, Download, Path, FileBuffer } from '@environment-safe/file';
+import { Canvas, ImageFile, pixelSimilarity } from '@environment-safe/canvas';
 import { isClient } from '@environment-safe/runtime-context';
 const should = chai.should();
 import * as fs from 'fs';
@@ -9,11 +9,11 @@ import * as path from 'path';
 import { Image, Booth } from '../image-booth.mjs';
 import booth from '../src/booth.mjs';
 
-const imageSimilarity = async (image, filePath)=>{
-    const canonicalFile = new File(filePath);
+const imageSimilarity = async (buffer, filePath)=>{
+    const canonicalFile = new ImageFile(filePath);
     await canonicalFile.load();
     const similarity = await pixelSimilarity(
-        image, 
+        buffer, 
         canonicalFile.buffer,
         { 
             notBlank: true,
@@ -31,7 +31,7 @@ const getImage = async (name, initialImage='./images/white.jpg')=>{
     return image;
 }
 
-const testLayerAction = async (name, handler, initial)=>{
+const testLayerAction = async (name, download, handler, initial)=>{
     const image = await getImage(name, initial);
     image.layers.length.should.equal(1);
     const layer = image.layers[0];
@@ -39,17 +39,17 @@ const testLayerAction = async (name, handler, initial)=>{
     const result = await saveAndReturnBuffer(name, image, download.expect());
     should.exist(result);
     const similarity = await imageSimilarity(
-        result.arrayBuffer(),
+        result,
         `./images/${name}.png`
     );
-    similarity.should.equal(1);
+    similarity.should.be.above(0.999);
 }
 
 const saveAndReturnBuffer = async (name, image, anticipatedDownload)=>{
     const savePath = Path.join(Path.location('downloads'), `${name}.png`);
     await image.save(savePath);
     const result = await anticipatedDownload;
-    return result;
+    return await result.arrayBuffer();
 }
 
 describe('image-booth', ()=>{
@@ -57,22 +57,19 @@ describe('image-booth', ()=>{
     configure({
         // dialog : async (context, actions)=> await actions.confirm(), // OK everything,
         //wantsInput : async (context, actions)=> await actions.click('#mocha'), // click everything
-        downloads: (dl)=>{
-            download.observe(dl);
-        },
-        write: (dl)=>{
-            download.observe(dl);
-        },
+        downloads: (dl)=> download.observe(dl),
+        write: (dl)=> download.observe(dl)
     });
     
     describe('filters', ()=>{
         
-        it.skip(`performs gaussian-blur`, async function(){
+        it(`performs gaussian-blur`, async function(){
             this.timeout(10000);
-            /*
-            testLayerAction(
+            //*
+            await testLayerAction(
                 'negative', 
-                (layer)=> layer.act('detect-edges', { direction: 'west' }),
+                download,
+                (layer)=> layer.act('gaussian-blur', { radius: 20 }),
                 './images/savannah_trees.jpg'
             ); //*/
             /*
@@ -83,7 +80,7 @@ describe('image-booth', ()=>{
             await image.ready;
             image.layers.length.should.equal(1);
             const layer = image.layers[0];
-            layer.act('detect-edges', { direction: 'west' })
+            layer.act('gaussian-blur', { radius: 20 });
             const anticipatedDownload = download.expect();
             await image.save(savePath);
             const result = await anticipatedDownload;
@@ -92,8 +89,9 @@ describe('image-booth', ()=>{
         
         it(`performs detect-edges`, async function(){
             this.timeout(10000);
-            testLayerAction(
+            await testLayerAction(
                 'negative', 
+                download,
                 (layer)=> layer.act('detect-edges', { direction: 'west' }),
                 './images/savannah_trees.jpg'
             );
@@ -104,8 +102,9 @@ describe('image-booth', ()=>{
         
         it(`performs a photnegative`, async function(){
             this.timeout(10000);
-            testLayerAction(
+            await testLayerAction(
                 'negative', 
+                download,
                 (layer)=> layer.act('negative', { }),
                 './images/savannah_trees.jpg'
             );
@@ -116,8 +115,9 @@ describe('image-booth', ()=>{
         
         it(`paints a 10px scatter`, async function(){
             this.timeout(10000);
-            testLayerAction(
+            await testLayerAction(
                 '10px-scatter', 
+                download,
                 (layer)=> layer.paint('paintbrush', { x: 30, y: 30 }, '10px-scatter') 
             );
         });

@@ -1,6 +1,7 @@
-import { Canvas } from '@environment-safe/canvas';
+import { Canvas, ImageFile } from '@environment-safe/canvas';
 import * as engine from './engine.mjs';
 import defaultBooth from './booth.mjs';
+//Canvas.legacyMode = true;
 export class Layer{
     constructor(options){
         let ready;
@@ -29,6 +30,7 @@ export class Layer{
                 this.pixels = data;
             }
         }
+        //todo: stop using `buffer` internally because it's a canvas
         if(options.source){
             this.ready = new Promise(async (resolve, reject)=>{
                 try{
@@ -47,7 +49,6 @@ export class Layer{
                         });
                         //this.buffer.hidden=false;
                         //document.body.appendChild(this.buffer);
-                        console.log('layer', this.buffer)
                         setFromCanvas();
                         resolve(this.pixels);
                     }catch(ex){ reject(ex) }
@@ -67,11 +68,22 @@ export class Layer{
         }
     }
     
+    async arrayBuffer(type='image/png'){
+        return await Canvas.toBuffer(this.buffer, type);
+    }
+    
     act(action, controls, booth=defaultBooth){
         const newPixels = booth.registry[action].act(this.pixels, controls);
         this.pixels = newPixels;
         this.context2d.putImageData(newPixels, 0, 0, 0, 0, this.pixels.width, this.pixels.height);
         this.dirty = true;
+    }
+    
+    async toDataURL(){
+        const canvas = this.buffer;
+        const file = await ImageFile.from(canvas);
+        const result = await file.toDataURL();
+        return result;
     }
     
     stroke(tool, shape, brushName, controls, booth=defaultBooth){

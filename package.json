@@ -78,7 +78,7 @@
         "url": "git@github.com:khrome/image-booth.git"
     },
     "dependencies": {
-        "@environment-safe/canvas": "^4.1.0",
+        "@environment-safe/canvas": "^4.2.0",
         "array-events": "^2.0.1",
         "async-arrays": "^1.1.0",
         "canvas": "*",
@@ -90,8 +90,8 @@
         "@babel/core": "^7.22.5",
         "@babel/plugin-transform-modules-commonjs": "^7.22.5",
         "@environment-safe/chai": "^0.1.0",
-        "@environment-safe/file": "^0.2.1",
-        "@open-automaton/moka": "^0.5.0",
+        "@environment-safe/file": "^0.3.1",
+        "@open-automaton/moka": "^0.5.1",
         "babel-plugin-search-and-replace": "^1.1.1",
         "chai": "*",
         "detect-browser": "^5.3.0",

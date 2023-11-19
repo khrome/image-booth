@@ -83,6 +83,12 @@ export class Image{
         return result;
     };
     
+    toDataURL(){
+        const mimeType = File.deriveMIMEType(this.body());
+        const format = File.deriveFormat(mimeType);
+        return `data:${mimeType};${format},${FileBuffer.toString('base64', this.body())}`
+    }
+    
     save(filename, cb){ //composite
         return new Promise(async (resolve, reject)=>{
             try{

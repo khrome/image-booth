@@ -39,7 +39,7 @@ openForm.onsubmit = (e)=>{
             }else{
                 const imageUrl = document.getElementById('imageUrl');
                 const options = { source: imageUrl.value };
-                console.log(options);
+                //console.log(options);
                 open(options);
             }
         }catch(ex){
