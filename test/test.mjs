@@ -67,7 +67,7 @@ describe('image-booth', ()=>{
             this.timeout(10000);
             //*
             await testLayerAction(
-                'negative', 
+                'gaussian-blur', 
                 download,
                 (layer)=> layer.act('gaussian-blur', { radius: 20 }),
                 './images/savannah_trees.jpg'
@@ -90,7 +90,7 @@ describe('image-booth', ()=>{
         it(`performs detect-edges`, async function(){
             this.timeout(10000);
             await testLayerAction(
-                'negative', 
+                'detect-edges', 
                 download,
                 (layer)=> layer.act('detect-edges', { direction: 'west' }),
                 './images/savannah_trees.jpg'
