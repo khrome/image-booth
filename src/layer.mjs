@@ -2,9 +2,14 @@ import { Canvas, ImageFile } from '@environment-safe/canvas';
 import * as engine from './engine.mjs';
 import defaultBooth from './booth.mjs';
 //Canvas.legacyMode = true;
+let count = 1;
 export class Layer{
     constructor(options){
         let ready;
+        this.options = options;
+        if(!this.options.name){
+            this.options.name = 'Layer '+(count++);
+        }
         const setFromCanvas = ()=>{
             this.context2d = this.buffer.getContext('2d', { willReadFrequently: true });
             this.height = this.buffer.height;
@@ -47,7 +52,7 @@ export class Layer{
                             height: options.image.height, 
                             width: options.image.width 
                         });
-                        //this.buffer.hidden=false;
+                        this.buffer.hidden=false;
                         //document.body.appendChild(this.buffer);
                         setFromCanvas();
                         resolve(this.pixels);

@@ -1,5 +1,5 @@
 import { Canvas } from '@environment-safe/canvas';
-import { Emitter } from 'extended-emitter/extended-emitter.mjs';
+import { Emitter } from 'extended-emitter';
 import { EventedArray } from 'array-events/array-events.mjs';
 import * as engine from './engine.mjs';
 
@@ -27,6 +27,19 @@ export class Image{
             }
             
         });
+    }
+    
+    summary(){
+        return this.layers.map((layer)=>{
+            return {
+                name: layer.options.name,
+                mask: null,
+                visible: true,
+                locked: false,
+                opacity: 1.0,
+                blendingMode: 'overlay'
+            }
+        })
     }
     
     dirty(value=null){
@@ -61,16 +74,16 @@ export class Image{
     removeLayer(layer){
         if(typeof layer == 'number') this.layers.splice(layer, 1);
         else this.layers.erase(layer);
-    };
+    }
     width(){ //focused layer
         return this.options.width;
-    };
+    }
     height(){ //focused layer
         return this.options.height;
-    };
+    }
     focusOn(layer){ //focused layer
         return (this.focused = layer) ;
-    };
+    }
     
     composite(type='canvas'){
         //todo: cache previous composite and only rerender from changed layer down
@@ -81,7 +94,7 @@ export class Image{
         info[type] = result;
         this.emit('composite', info);
         return result;
-    };
+    }
     
     toDataURL(){
         const mimeType = File.deriveMIMEType(this.body());
@@ -101,5 +114,5 @@ export class Image{
                 reject(ex);
             }
         });
-    };
+    }
 }

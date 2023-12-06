@@ -41,12 +41,12 @@ import { TinyTextureTumbler } from './generators/tiny-texture-tumbler.mjs';
 import { Noise } from './generators/noise.mjs';
 
 import * as defaultEngine from './engine.mjs';
-import { Emitter } from 'extended-emitter/extended-emitter.mjs';
+import { Emitter } from 'extended-emitter';
 
 const metalist = ['Shift', 'Control', 'Alt', 'Meta'];
 
 export class Booth{
-    constructor(engine){
+    constructor(engine, options={}){
         this.engine = engine;
         this.toDump = [];
         this.registry = {};
@@ -55,16 +55,20 @@ export class Booth{
         this.currentTool = null;
         this.currentBrush = null;
         this.cloneMeta = {};
+        this.workingHandler = options.working || (()=>{
+            const el = document.getElementById('working');
+            el.style.display = 'block';
+        });
+        this.stopWorkingHandler = options.stopWorking || (()=>{
+            const el = document.getElementById('working');
+            el.style.display = 'none';
+        });
         (new Emitter()).onto(this);
     }
     
     working(value){
-        const el = document.getElementById('working');
-        if(value){
-            el.style.display = 'block';
-        }else{
-            el.style.display = 'none';
-        }
+        if(this.workingHandler && value) this.workingHandler(value);
+        if(this.stopWorkingHandler && !value) this.stopWorkingHandler(value);
     }
     
     setForeground(color){
@@ -77,11 +81,102 @@ export class Booth{
         this.emit('set-background', color);
     }
     
+    //outside the image where we just need to set and react
+    setupColorInteractions(foregroundFn, backgroundFn){
+        const changeForeground = (value)=>{
+              booth.setForeground(value.toUpperCase());
+        }
+        const changeBackground = (value)=>{
+              booth.setBackground(value.toUpperCase());
+        }
+        this.on('set-foreground', (color)=>{
+              if(foregroundFn) foregroundFn(color);
+        });
+        this.on('set-background', (color)=>{
+              if(backgroundFn) backgroundFn(color);
+        });
+        //changeForeground(foreground);
+        //changeBackground(background);
+        return {
+            changeForeground, 
+            changeBackground
+        };
+    };
+    
+    //in the image where we need initial values, current values and to react
+    setupColorModel( options = {foreground: {color:'#000000'}, background: {color:'#FFFFFF'} }){
+        if(!options.foreground.color) options.foreground.color = '#000000';
+        if(!options.background.color) options.background.color = '#FFFFFF';
+        let focused = true;
+        let currentForeground = options.foreground.color;
+        let currentBackground = options.background.color;
+        const { 
+            changeForeground, changeBackground 
+        } = this.setupColorInteractions((color)=>{
+            if(focused){
+                currentForeground = color;
+                if(options.foreground.handler) options.foreground.handler(color);
+            }
+        },(color)=>{
+            if(focused){
+                currentBackground = color;
+                if(options.background.handler) options.background.handler(color);
+            }
+        });
+        changeForeground(options.foreground.color);
+        changeBackground(options.background.color);
+        if(globalThis && globalThis.addEventListener){
+            globalThis.addEventListener('focus', ()=>{
+                focused = true;
+            });
+            globalThis.addEventListener('blur', ()=>{
+                focused = false;
+            });
+        }
+        return {
+            changeForeground, 
+            changeBackground
+        };
+    };
+    
+    bindEventsToDom(process){
+        this.on('set-foreground', (value)=>{
+            const event = new CustomEvent('set-foreground', {
+                detail: value
+            });
+            if(process){
+                process.send('set-foreground', value);
+            }else{
+                document.body.dispatchEvent(event)
+            }
+        });
+        this.on('set-background', (value)=>{
+            const event = new CustomEvent('set-background', { 
+                detail: value
+            });
+            if(process){
+                process.send('set-background', value);
+            }else{
+                document.body.dispatchEvent(event)
+            }
+        });
+    }
+    
+    recieveEventsFromDom(){
+        this.on('set-foreground', (value)=>{
+            this.setForeground(value);
+        });
+        this.on('set-background', (value)=>{
+            this.setBackground(value);
+        });
+    }
+    
     bind(canvas, image, resolution=100){
         canvas.width = image.width();
         canvas.height = image.height();
         canvas.setAttribute('style', "cursor : url('./icon/Precision.cur'), crosshair")
         let framelock;
+        
         const getFrame = (handler)=>{
             if(!framelock){
                 framelock = true;
@@ -96,6 +191,7 @@ export class Booth{
             getFrame(()=>{
                 dirty = image.dirty();
                 if(dirty){
+                    console.log('UPDATE!')
                     const context = canvas.getContext('2d', { willReadFrequently: true });
                     const pixels = image.composite('pixels');
                     context.putImageData(pixels, 0, 0, 0, 0, pixels.width, pixels.height);
@@ -124,6 +220,7 @@ export class Booth{
         });
         var drawing = false;
         const drawPoint = (event)=>{
+            //console.log('D', this.currentTool, this.currentBrush, this.foreground, drawing, !!image.focused);
             if(this.currentTool && this.currentBrush && drawing && image.focused){
                 const rect = canvas.getBoundingClientRect();
                 const x = event.x - rect.left;
@@ -144,12 +241,14 @@ export class Booth{
                     )
                     image.currentLayer.context2d.putImageData(image.focused.pixels, 0, 0);
                     image.currentLayer.dirty = true;
+                    console.log('PAINT', x, y);
                     //image.currentLayer.alteredSinceLastPreview = true;
                     //image.currentLayer.parentImage.repaint();
                 });
             }
         }
         canvas.addEventListener('mousedown', ()=>{
+            console.log('DRAW', image.focused, this.foreground);
             drawing = true;
             drawPoint(event);
         });
