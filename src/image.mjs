@@ -58,11 +58,21 @@ export class Image{
     }
     
     async newLayer(options, callback){
+        if(this.layers[0] &&  this.layers[0].buffer){ // if no size, take the first layers size
+            if(!options.height) options.height = this.layers[0].buffer.height;
+            if(!options.width) options.width = this.layers[0].buffer.width;
+        }
         return this.engine.newLayer(options, (newLayer)=>{
             newLayer.image = this;
             //if there's no passed height, take the height of the created layer
             if(!this.options.height) this.options.height = newLayer.height;
             if(!this.options.width) this.options.width = newLayer.width;
+            if(this.options.height && !options.height){
+                options.height = this.options.height;
+            }
+            if(this.options.width && !options.width){
+                options.width = this.options.width;
+            }
             this.layers.push(newLayer);
             if(!this.currentLayer) this.currentLayer = newLayer;
             this.focusOn(newLayer);
